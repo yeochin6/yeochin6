@@ -219,11 +219,9 @@ body {
   font-size: 14px;
 }
 
-/* ===== 灵动波浪进度条 ===== */
+/* 进度条 */
 .progress-wrap {
   margin-bottom: 24px;
-  position: relative;
-  z-index: 1;
 }
 
 .progress-info {
@@ -237,191 +235,154 @@ body {
 
 .progress-bar {
   position: relative;
-  height: 40px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
-  border-radius: 20px;
+  height: 32px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-radius: 999px;
   overflow: hidden;
-  border: 2px solid rgba(99, 102, 241, 0.15);
-  box-shadow:
-    inset 0 2px 8px rgba(99, 102, 241, 0.08),
-    0 4px 20px rgba(99, 102, 241, 0.1);
+  border: 1px solid var(--border);
 }
 
-/* 波浪容器 */
-.progress-wave {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* 波浪底层 */
-.wave-back {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 300%;
-  height: 100%;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(139, 92, 246, 0.06) 25%,
-    transparent 50%
-  );
-  animation: wave-back 3s linear infinite;
-}
-
-/* 波浪前景 */
-.wave-front {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 300%;
-  height: 100%;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(6, 182, 212, 0.08) 30%,
-    transparent 60%
-  );
-  animation: wave-front 2.5s linear infinite;
-}
-
-@keyframes wave-back {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(33.33%); }
-}
-
-@keyframes wave-front {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(33.33%); }
-}
-
-/* 进度条填充 - 波浪形状 */
 .progress-fill {
   position: relative;
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg,
-    #4f46e5 0%,
-    #6366f1 15%,
-    #7c3aed 35%,
-    #8b5cf6 55%,
-    #06b6d4 75%,
-    #22d3ee 100%
-  );
-  border-radius: 18px;
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+  border-radius: 999px;
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    0 0 20px rgba(99, 102, 241, 0.5),
-    0 0 40px rgba(139, 92, 246, 0.3);
+  overflow: hidden;
 }
 
-/* 流光效果 */
-.progress-fill::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
-  animation: shimmer 2s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { left: -100%; }
-  100% { left: 150%; }
-}
-
-/* 波浪边缘效果 */
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 20px;
-  height: calc(100% + 4px);
-  background: linear-gradient(90deg,
-    rgba(255, 255, 255, 0.3),
-    rgba(255, 255, 255, 0.8)
-  );
-  border-radius: 0 18px 18px 0;
-  animation: pulse-edge 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse-edge {
-  0%, 100% {
-    opacity: 0.6;
-    width: 20px;
-  }
-  50% {
-    opacity: 1;
-    width: 28px;
-  }
-}
-
-/* 顶部波浪装饰 */
-.wave-surface {
+/* 波浪层 */
+.wave {
   position: absolute;
   top: 0;
   left: 0;
   width: 200%;
-  height: 8px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='rgba(255,255,255,0.3)' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
-  background-size: 600px 8px;
-  animation: wave-surface 4s linear infinite paused;
-  opacity: 0;
-  transition: opacity 0.3s;
+  height: 100%;
+  background: transparent;
+  opacity: 0.6;
 }
 
-/* 进度条内部纹理 */
-.progress-texture {
+.wave1 {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 20px,
+    rgba(255, 255, 255, 0.15) 20px,
+    rgba(255, 255, 255, 0.15) 40px
+  );
+  animation: waveMove 2s linear infinite;
+}
+
+.wave2 {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 30px,
+    rgba(255, 255, 255, 0.1) 30px,
+    rgba(255, 255, 255, 0.1) 60px
+  );
+  animation: waveMove 3s linear infinite reverse;
+}
+
+.wave3 {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 15px,
+    rgba(255, 255, 255, 0.08) 15px,
+    rgba(255, 255, 255, 0.08) 30px
+  );
+  animation: waveMove 1.5s linear infinite;
+}
+
+@keyframes waveMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* 光影流动效果 */
+.shimmer {
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    -45deg,
-    transparent,
-    transparent 4px,
-    rgba(255, 255, 255, 0.05) 4px,
-    rgba(255, 255, 255, 0.05) 8px
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 60%,
+    transparent 100%
   );
-  border-radius: 18px;
+  animation: shimmerFlow 3s ease-in-out infinite;
 }
 
-/* 百分比指示器 */
-.progress-glow {
+@keyframes shimmerFlow {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* 进度条边缘光晕 */
+.progress-fill::after {
+  content: '';
   position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  animation: glow-pulse 2s ease-in-out infinite;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
+  border-radius: 0 999px 999px 0;
+  animation: edgeGlow 2s ease-in-out infinite;
 }
 
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    transform: translateY(-50%) scale(1);
+@keyframes edgeGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* 深色模式下的进度条 */
+@media (prefers-color-scheme: dark) {
+  .progress-bar {
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
   }
-  50% {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
-    transform: translateY(-50%) scale(1.3);
+
+  .wave1 {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 20px,
+      rgba(255, 255, 255, 0.1) 20px,
+      rgba(255, 255, 255, 0.1) 40px
+    );
   }
+
+  .wave2 {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 30px,
+      rgba(255, 255, 255, 0.08) 30px,
+      rgba(255, 255, 255, 0.08) 60px
+    );
+  }
+
+  .wave3 {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 15px,
+      rgba(255, 255, 255, 0.05) 15px,
+      rgba(255, 255, 255, 0.05) 30px
+    );
+  }
+}
+
+/* 响应式 - 移动端 */
+@media (max-width: 640px) {
+  .progress-bar { height: 28px; }
 }
 
 /* 鼠标悬停效果 */
