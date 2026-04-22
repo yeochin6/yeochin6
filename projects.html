@@ -1,246 +1,477 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>项目 - BluePurple Portal</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>加班记录 · 打工人专用</title>
+  <style>
+    :root {
+      --primary: #5866ef;
+      --accent: #9a49fa;
+      --danger: #fa4856;
+      --warning: #ffb902;
+      --stripes: repeating-linear-gradient(135deg, #426fff1a 0 8px, #fff2 8px 16px);
+      --bg: #f7faff;
+      --header-gradient: linear-gradient(90deg, #5668dd 0%, #a97df8 100%);
+      --radius: 18px;
+      --shadow: 0 4px 24px 0 #728dff33;
+      --cell-bg: #eef3fb;
+      --cell-holiday: #f8f2ff;
+      --cell-editing: #dbebff;
+      --font: "Segoe UI", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      --progress-bg: #e7eeff;
+      --overtime-bar: linear-gradient(90deg, #5668dd 0%, #6fd6fa 100%);
+      --block-padding: 12px;
+      --headline: 1.30em;
+    }
+    body {
+      min-height: 100vh; margin:0; background: var(--bg); font-family:var(--font); color:#24284f;
+    }
+    header {
+      background: var(--header-gradient);
+      color: #fff; text-shadow: 0 1px 10px #6a28c666;
+      padding: 20px 8px 14px 8px;
+      text-align: center;
+      font-size:var(--headline);
+      position:sticky; top:0; z-index:10;
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: var(--shadow);
+      letter-spacing: .10em;
+      margin-bottom: 18px;
+      user-select: none;
+    }
+    main {
+      max-width: 525px;
+      margin: auto;
+      padding: 6px 8px 18px 8px;
+    }
+    .progress-area {
+      margin-bottom: 16px;
+    }
+    .period-label {
+      color: #4d60ad;
+      font-weight: 500;
+      text-align: center;
+      margin:2px 0 3px 0;
+      font-size:.97em;
+    }
+    .progress-bg {
+      width:100%; height:14px; background:var(--progress-bg);
+      border-radius:8px; overflow:hidden;
+      margin-bottom:3px;
+    }
+    .progress-inner {
+      height:100%; background:var(--header-gradient); width:0%;
+      transition: width 0.8s cubic-bezier(0.7,0,0.3,1);
+      border-radius:8px;
+      box-shadow: 0 2px 8px #7275bd2a;
+    }
+    /* 日历 */
+    .calendar {
+      background:#fff;
+      border-radius:var(--radius);
+      padding:var(--block-padding) 4px 12px 4px;
+      box-shadow: var(--shadow);
+      margin-bottom:18px;
+      overflow-x:auto;
+    }
+    .calendar-header, .calendar-row {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+      align-items:center;
+    }
+    .calendar-header span {
+      color: var(--primary);
+      font-weight: 600;
+      font-size:1em;
+      text-align:center;
+      padding:2px 0;
+      user-select: none;
+    }
+    .calendar-cell {
+      min-width:38px;height:48px;
+      background: var(--cell-bg);
+      margin: 1.5px 0;
+      border-radius: 9px;
+      font-size:1em;
+      text-align:center;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      position:relative;
+      cursor:pointer;
+      transition: border .16s, box-shadow .13s, background .18s;
+      border: 2.2px solid transparent;
+      overflow: hidden;
+    }
+    .calendar-cell.today { border:2.2px solid var(--primary);}
+    .calendar-cell[data-weekend="1"] { background: var(--cell-holiday); }
+    .calendar-cell.editing { background: var(--cell-editing); box-shadow:0 1px 6px #70b6ff12;}
+    .cell-date {font-weight:500;font-size:1.05em;}
+    .cell-ot-bar-bg {
+      margin-top:0.5em;
+      width:82%;height:7px;background:#e5e5ee;
+      border-radius:7px;overflow:hidden;position:relative;
+    }
+    .cell-ot-bar {
+      height:100%;border-radius:7px;
+      transition:width .25s;
+      background: var(--overtime-bar);
+      box-shadow:0 1px 4px #5668dd35; min-width:1.5px;
+    }
+    .cell-ot-bar.warn { background: var(--warning);}
+    .cell-ot-bar.full { background: var(--danger);}
+    .cell-ot-num {
+      margin:.18em 0 0 0; font-size:.97em; color: var(--primary); font-weight:bold;
+      user-select:none; pointer-events:none;
+    }
+    .cell-blank { background: none; pointer-events: none;}
+    /* 弹窗 */
+    .modal-mask {
+      position:fixed;top:0;left:0;width:100vw;height:100vh;
+      background:#727e9433;z-index:1000;display:none;align-items:center;justify-content:center;
+    }
+    .modal {
+      background:#fff; border-radius:16px; box-shadow:var(--shadow);
+      padding:22px 24px; min-width:222px;
+      max-width:93vw;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-size:1.07em;
+      animation:fadein .22s;
+    }
+    @keyframes fadein { from {opacity:0; transform:translateY(40px);} to{opacity:1; transform:none;}}
+    .modal label {margin-bottom:7px;color:#8693e7;}
+    .modal input[type='number']{
+      width:80px;font-size:1.05em;margin-bottom:13px; padding:4px 0 4px 7px;
+      border:1.5px solid #b3d0f8; background:#f6f8fd;border-radius:8px;
+      color: var(--primary);
+    }
+    .modal .modal-btns { display:flex; gap:12px; }
+    .modal button {
+      padding:.55em 1.7em; border:none; border-radius:7px;
+      font-size:1em; font-weight:500; cursor:pointer;
+      box-shadow:0 3px 18px #acb5fa18;
+      background:var(--primary);color:#fff;
+      transition:background .19s;
+    }
+    .modal button.cancel { background: #b8bde4; color: #fff; }
+    /* 汇总 */
+    .summary {
+      background:#fff;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      font-size:1.09em;
+      padding:var(--block-padding) 10px 10px 10px;
+      margin-bottom:18px;
+      line-height:2.16;
+      text-align:center;
+    }
+    .summary strong {
+      color:var(--primary);
+      font-size:1.21em;
+    }
+    .input-group {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:8px;
+    }
+    .input-group label {
+      margin-right:6px;
+      font-size:1em;
+      color:var(--primary);
+    } 
+    #hourly-wage {
+      padding:7px 7px 7px 8px;
+      width: 82px;
+      font-size:1.06em;
+      border:1.5px solid #b3d0f8;
+      border-radius:7px;
+      background:#f6f8fd;
+      margin-right:6px;
+    }
+    .input-group button {
+      background:var(--accent);
+      color:#fff;
+      border-radius:7px;
+      border:none;
+      padding:7px 18px;
+      font-weight:500;
+      box-shadow:0 1px 2px #4442bc14;
+      cursor:pointer;
+      margin-left:6px;
+      font-size:1em;
+      transition:background 0.2s;
+    }
+    .input-group button:hover { background:var(--primary);}
+    @media (max-width:640px) {
+      main { padding:2px;}
+      .calendar,.summary{padding:10px 2px }
+      .calendar-cell{min-width: 17px; font-size:.94em;}
+      header{font-size:1.01em;}
+      .modal {padding:20px 6vw;}
+    }
+  </style>
 </head>
 <body>
-  <button class="menu-toggle" id="menuToggle" aria-label="菜单">
-    <span></span><span></span><span></span>
-  </button>
-
-  <header class="topbar">
-    <div class="brand">
-      <h1>BluePurple Portal</h1>
-      <p class="tagline">项目展示</p>
+  <header id="header-slogan"></header>
+  <main>
+    <!-- 进度条 -->
+    <div class="progress-area">
+      <div class="period-label" id="period-label"></div>
+      <div class="progress-bg"><div class="progress-inner" id="progress-inner"></div></div>
     </div>
-    <nav class="links" id="navLinks">
-      <a href="index.html">主页</a>
-      <a href="about.html">关于</a>
-      <a href="docs.html">文档</a>
-      <a href="notes.html">笔记</a>
-    </nav>
-  </header>
-
-  <main class="container">
-    <section class="hero">
-      <h2>项目</h2>
-      <p class="subtitle">开源项目 & 个人作品</p>
-      <p>这里展示我的开源项目和个人作品集。</p>
-      <div class="cards" style="margin-top: 24px;">
-        <a class="card" href="#">
-          <div class="icon">🚀</div>
-          <div>项目 A</div>
-        </a>
-        <a class="card" href="#">
-          <div class="icon">⚡</div>
-          <div>项目 B</div>
-        </a>
-        <a class="card" href="#">
-          <div class="icon">🎨</div>
-          <div>项目 C</div>
-        </a>
-        <a class="card" href="#">
-          <div class="icon">🔧</div>
-          <div>项目 D</div>
-        </a>
+    <!-- 日历 -->
+    <section class="calendar" id="calendar"></section>
+    <!-- 汇总 -->
+    <section class="summary" id="summary"></section>
+    <!-- 时薪填写 -->
+    <form class="input-group" id="wage-form" autocomplete="off">
+      <label for="hourly-wage">时薪(元):</label>
+      <input type="number" min="1" step="1" id="hourly-wage" required>
+      <button type="submit">确定</button>
+    </form>
+    <!-- 填写加班小时的弹窗 -->
+    <div class="modal-mask" id="modal-mask">
+      <div class="modal" id="modal">
+        <div>
+          <label id="modal-date-label"></label>
+        </div>
+        <input type="number" min="0" step="0.1" id="modal-input-hours">
+        <div class="modal-btns">
+          <button type="button" id="modal-save-btn">保存</button>
+          <button type="button" class="cancel" id="modal-cancel-btn">取消</button>
+        </div>
       </div>
-    </section>
+    </div>
   </main>
+  <script>
+    // ========= 标语 (每日随浏览器跳转/刷新轮换一条) =========
+    const slogans = [
+      "今天也是努力搬砖的一天！",
+      "加班使我快乐，薪资让我心安。",
+      "打工路上，无问东西。",
+      "科技让生活更美好，钱包也更鼓。",
+      "向钱看，向厚赚！",
+      "平凡岗位，闪耀青春。",
+      "努力从未被辜负，加班也得有度。",
+      "代码敲不完，薪水继续涨。",
+      "工资不够，时间来凑。",
+      "打工人的世界，只有干与更干！"
+    ];
+    // 用每日hash轮换
+    function todaySlogan() {
+      const d = new Date();
+      const i = (d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate()) % slogans.length;
+      return slogans[i];
+    }
+    document.getElementById('header-slogan').innerText = todaySlogan();
 
-  <footer class="footer">
-    © 2026 BluePurple Portal
-  </footer>
+    // --------------- 考勤周期 ---------------
+    const PERIOD_DAYS = 31; // 3/21-4/20
+    function getCurrentPeriod(date = new Date()) {
+      let year = date.getFullYear();
+      let month = date.getMonth()+1;
+      let day = date.getDate();
+      let sYear = year, sMonth = month;
+      if(day < 21) {
+        sMonth--;
+        if(sMonth < 1) { sMonth=12; sYear--; }
+      }
+      let start = new Date(sYear, sMonth-1, 21);
+      let end = new Date(start);
+      end.setDate(start.getDate() + PERIOD_DAYS - 1);
+      return {start, end};
+    }
+    function getDaysArray(start, end){
+      let arr = [];
+      let d = new Date(start);
+      while(d <= end){
+        arr.push(new Date(d));
+        d.setDate(d.getDate()+1);
+      }
+      return arr;
+    }
+    function isWeekend(date){
+      return date.getDay() === 0 || date.getDay() === 6;
+    }
+    function formatDateKey(date){
+      return [
+        date.getFullYear(),
+        ('0'+(date.getMonth()+1)).slice(-2),
+        ('0'+date.getDate()).slice(-2)
+      ].join('-');
+    }
 
-  <script src="script.js"></script>
+    // --------------- 数据持久化 ---------------
+    const STORAGE_KEY = 'overtime_v1';
+    function saveData(data){ localStorage.setItem(STORAGE_KEY,JSON.stringify(data)); }
+    function loadData(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }catch{ return {}; } }
 
-<style>
+    const WAGE_KEY = 'ot_wage';
+    function setWage(w){ localStorage.setItem(WAGE_KEY, w);}
+    function getWage(){ let w=parseInt(localStorage.getItem(WAGE_KEY)); return w>0?w:30;}
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+    // --------------- 日历渲染与交互 ---------------
+    function render(){
+      // 1. 周期/进度
+      const now = new Date();
+      const period = getCurrentPeriod(now);
+      document.getElementById('period-label').innerText = `考勤周期：${period.start.getFullYear()}/${period.start.getMonth()+1}/${period.start.getDate()} - ${period.end.getFullYear()}/${period.end.getMonth()+1}/${period.end.getDate()}`;
+      // 进度
+      let total = Math.round((period.end.getTime()-period.start.getTime())/86400000)+1;
+      let cur = Math.min(total, Math.round((now.getTime()-period.start.getTime())/86400000)+1);
+      document.getElementById('progress-inner').style.width = `${100*cur/total}%`;
+      // 2. 日历
+      renderCalendar(period.start, period.end, now);
+      // 3. 汇总
+      updateSummary(period.start, period.end);
+      // 4. 时薪输入
+      showWageInput();
+    }
+    function renderCalendar(start, end, today){
+      const days = getDaysArray(start, end);
+      let html = [];
+      // 星期头部
+      html.push('<div class="calendar-header">'+["一","二","三","四","五","六","日"].map(d=>`<span>${d}</span>`).join('')+'</div>');
+      // 日期偏移
+      let blanks = (days[0].getDay()+6)%7; //周一为0
+      let cells = Array(blanks).fill(''); //开头空白
+      cells = cells.concat(days);
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
+      // 写入每格
+      let row = [];
+      let data = loadData();
+      for(let idx=0; idx<cells.length; idx++){
+        if(typeof cells[idx]==="string"){ //空白
+          row.push('<div class="calendar-cell cell-blank"></div>');
+        }else{
+          let d = cells[idx];
+          let key = formatDateKey(d);
+          let isWk = isWeekend(d);
+          let isToday = d.getFullYear()===today.getFullYear() && d.getMonth()===today.getMonth() && d.getDate()===today.getDate();
+          // 已填写?
+          let h = data[key]?data[key].h:undefined;
+          let bar = '', valShow='';
+          if(h!=null && h!=='' && h>0){
+            let max = isWk?8:4, frac = h/max;
+            let barClass = frac>.99?'full':(frac>.66?'warn':'');
+            bar = `<div class="cell-ot-bar-bg"><div class="cell-ot-bar ${barClass}" style="width:${Math.min(frac*100,100)}%"></div></div>`;
+            valShow = `<div class="cell-ot-num">${h}h</div>`;
+          } else {
+            bar = ''; valShow='';
+          }
+          row.push(`<div class="calendar-cell${isToday?' today':''}" tabindex=0
+            data-datekey="${key}" data-weekend="${isWk?1:0}" onclick="onCellClick('${key}')" onkeydown="if(event.key==='Enter'){onCellClick('${key}')}"
+          >
+            <div class="cell-date">${d.getDate()}</div>
+            ${bar}
+            ${valShow}
+          </div>`);
+        }
+        if((idx+1)%7===0 || idx===cells.length-1){
+          html.push(`<div class="calendar-row">${row.join('')}</div>`);
+          row = [];
+        }
+      }
+      document.getElementById('calendar').innerHTML = html.join('');
+    }
+    // ---- 汇总区域 ----
+    function updateSummary(start, end){
+      let data = loadData();
+      let wage = getWage();
+      let tempH=0, tempFee=0, holiH=0, holiFee=0;
+      let days = getDaysArray(start,end);
+      days.forEach(d=>{
+        let key = formatDateKey(d);
+        let val = data[key]?parseFloat(data[key].h):0;
+        if(!val) return;
+        if(isWeekend(d)){
+          holiH+=val; holiFee += val*wage*2;
+        }else{
+          tempH+=val; tempFee += val*wage*1.5;
+        }
+      });
+      let totalFee = tempFee+holiFee;
+      document.getElementById('summary').innerHTML = `
+        临时加班（工作日）合计：<strong>${tempH.toFixed(1)}</strong> 小时<br>
+        假日加班（周末）合计：<strong>${holiH.toFixed(1)}</strong> 小时<br>
+        加班工资合计：<strong>￥${totalFee.toFixed(2)}</strong>
+      `;
+    }
+    // ---- 时薪输入组件 ----
+    function showWageInput(){
+      let wageForm = document.getElementById('wage-form');
+      let wageInput = document.getElementById('hourly-wage');
+      if(wageInput) wageInput.value = getWage();
+      wageForm.style.display = "flex";
 
-.inland-security-footer {
-  position: fixed;
-  z-index: 10;
-  bottom: 0;
-  right: 0;
-  width: fit-content;
-  display: flex;
-  justify-content: flex-end;
-}
+      wageForm.onsubmit = function(e){
+        e.preventDefault();
+        let v = parseInt(wageInput.value.trim())||30;
+        setWage(v);
+        wageForm.style.display = "none";
+        render();
+        // 2秒后可重新修改
+        setTimeout(()=>{wageForm.style.display="flex";}, 2000);
+        return false;
+      };
+    }
+    // ---- 点击日历格，弹窗填写加班时长 ----
+    // 防重入弹窗
+    let modalLock = false;
+    window.onCellClick = function(key){
+      if(!key || modalLock) return;
+      let mask = document.getElementById('modal-mask');
+      let modal = document.getElementById('modal');
+      let input = document.getElementById('modal-input-hours');
+      let dateLabel = document.getElementById('modal-date-label');
+      const date = new Date(key);
+      // 今日及之前可填，未来不可填
+      let today = new Date();
+      today.setHours(0,0,0,0);
+      if(date > today) return;
+      // 读旧值
+      let isWk = isWeekend(date), max = isWk?8:4;
+      let data = loadData();
+      let old = data[key]?data[key].h:'';
+      input.value = old;
+      input.max = max;
+      input.min = 0;
+      dateLabel.innerText = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}${isWk?'（假日）':'（工作日）'}，上限${max}h`;
+      mask.style.display = 'flex';
+      input.focus(); input.select();
+      modalLock = true;
 
-.tooltip-container {
-  position: relative;
-}
+      // 保存
+      document.getElementById('modal-save-btn').onclick = function(){
+        let v = parseFloat(input.value)||0;
+        if(v<0) v=0;
+        if(v>max) v=max;
+        if(!data[key]) data[key] = {};
+        if(v===0) delete data[key].h;
+        else data[key].h = v;
+        saveData(data);
+        mask.style.display='none'; modalLock = false;
+        render();
+      };
+      // 取消
+      document.getElementById('modal-cancel-btn').onclick = ()=>{
+        mask.style.display='none'; modalLock=false;
+      };
+      input.onkeydown = function(e){
+        if(e.key==="Enter")document.getElementById('modal-save-btn').onclick();
+      }
+      mask.onclick = function(ev){
+        if(ev.target ===mask){
+          mask.style.display = 'none';modalLock=false;
+        }
+      };
+    };
 
-.trigger-content {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background-color: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-}
+    // 初始化
+    render();
 
-.minimax-link {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 300;
-  color: #adadad;
-  text-decoration: none;
-}
-
-.minimax-link:visited {
-  color: #adadad;
-}
-
-.minimax-link:hover {
-  color: #666666;
-}
-
-.tooltip-content {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
-  font-size: 12px;
-  line-height: 17px;
-  background-color: #fafafa;
-  border-radius: 12px;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: #171717;
-}
-
-/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
-.tooltip-content::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  right: 0;
-  height: 16px;
-}
-
-.tooltip-container:hover .tooltip-content {
-  display: flex;
-}
-
-.info-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
-.beian-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #171717;
-}
-
-.beian-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 2px;
-}
-
-.underline-text {
-  color: #171717;
-  text-decoration: underline;
-}
-
-.underline-text:hover {
-  color: #000000;
-}
-
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .trigger-content {
-    background-color: transparent;
-  }
-
-  .minimax-link,
-  .minimax-link:visited {
-    color: #666666;
-  }
-
-  .minimax-link:hover {
-    color: #adadad;
-  }
-
-  .tooltip-content {
-    background-color: #262626;
-    color: #ededed;
-  }
-
-  .beian-link,
-  .underline-text {
-    color: #ededed;
-  }
-
-  .underline-text:hover {
-    color: #ffffff;
-  }
-}
-
-</style>
-<div class="inland-security-footer">
-  <div class="tooltip-container">
-    <div class="trigger-content">
-      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
-        <span>© 2026 MiniMax</span>
-      </a>
-    </div>
-    <div class="tooltip-content">
-      <section class="info-section">
-        <span>上海稀宇科技有限公司</span>
-      </section>
-
-      <section class="info-section">
-        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
-          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
-          <span class="underline-text">沪公网安备31010402010179号</span>
-        </a>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
-          沪ICP备2023003282号-38
-        </a>
-      </section>
-
-      <section class="info-section">
-        <span>模型名称：MiniMax</span>
-        <span>备案号：Shanghai-MiniMax-202505230046</span>
-      </section>
-
-      <section class="info-section">
-        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
-          用户协议
-        </a>
-        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
-          隐私政策
-        </a>
-      </section>
-    </div>
-  </div>
-</div>
-
+    // 响应式
+    window.addEventListener("resize",()=>{render();});
+  </script>
 </body>
 </html>
