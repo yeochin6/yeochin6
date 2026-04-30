@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客门户 - 打工人导航站</title>
+    <style>
+        :root {
+            --bg: #f8f9fc;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --blue: #5b8def;
+            --purple: #8b5cf6;
+            --blue-light: #e8f0fe;
+            --purple-light: #f3eeff;
+            --gradient: linear-gradient(135deg, #5b8def 0%, #7c6ff7 40%, #8b5cf6 70%, #a78bfa 100%);
+            --gradient-h: linear-gradient(135deg, #4a7de0 0%, #6b5ef0 40%, #7b4de8 70%, #9370e8 100%);
+            --gradient-subtle: linear-gradient(135deg, rgba(91, 141, 239, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10), 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.25), 0 0 60px rgba(91, 141, 239, 0.12);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Monaco', 'Menlo', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ============ 科技感背景 ============ */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.35;
+            background-image:
+                radial-gradient(circle, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: radial-gradient(ellipse 65% 55% at 50% 35%, black 30%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 35%, black 30%, transparent 70%);
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(90px);
+            opacity: 0.14;
+            animation: orbFloat 14s ease-in-out infinite;
+        }
+        .bg-orb.orb-1 {
+            width: 380px;
+            height: 380px;
+            background: #8b5cf6;
+            top: -8%;
+            left: -6%;
+            animation-delay: 0s;
+            animation-duration: 16s;
+        }
+        .bg-orb.orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #5b8def;
+            bottom: -10%;
+            right: -5%;
+            animation-delay: -5s;
+            animation-duration: 18s;
+        }
+        .bg-orb.orb-3 {
+            width: 220px;
+            height: 220px;
+            background: #a78bfa;
+            top: 45%;
+            left: 55%;
+            animation-delay: -9s;
+            animation-duration: 13s;
+            opacity: 0.09;
+        }
+
+        @keyframes orbFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(40px, -30px) scale(1.12);
+            }
+            50% {
+                transform: translate(-20px, 25px) scale(0.92);
+            }
+            75% {
+                transform: translate(-35px, -15px) scale(1.08);
+            }
+        }
+
+        /* 浮动光点 */
+        .floating-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .floating-dots .dot {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--purple);
+            animation: dotDrift 20s linear infinite;
+            opacity: 0;
+        }
+        .dot:nth-child(1) {
+            width: 5px;
+            height: 5px;
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+            animation-duration: 22s;
+            background: #8b5cf6;
+        }
+        .dot:nth-child(2) {
+            width: 3px;
+            height: 3px;
+            left: 25%;
+            top: 60%;
+            animation-delay: -5s;
+            animation-duration: 19s;
+            background: #5b8def;
+        }
+        .dot:nth-child(3) {
+            width: 4px;
+            height: 4px;
+            left: 55%;
+            top: 15%;
+            animation-delay: -10s;
+            animation-duration: 24s;
+            background: #7c6ff7;
+        }
+        .dot:nth-child(4) {
+            width: 6px;
+            height: 6px;
+            left: 70%;
+            top: 70%;
+            animation-delay: -3s;
+            animation-duration: 21s;
+            background: #a78bfa;
+        }
+        .dot:nth-child(5) {
+            width: 3px;
+            height: 3px;
+            left: 40%;
+            top: 35%;
+            animation-delay: -14s;
+            animation-duration: 26s;
+            background: #5b8def;
+        }
+        .dot:nth-child(6) {
+            width: 4px;
+            height: 4px;
+            left: 85%;
+            top: 40%;
+            animation-delay: -8s;
+            animation-duration: 18s;
+            background: #8b5cf6;
+        }
+
+        @keyframes dotDrift {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.8;
+                transform: translate(15px, -30px) scale(1);
+            }
+            15% {
+                opacity: 1;
+                transform: translate(50px, -80px) scale(1.4);
+            }
+            30% {
+                opacity: 0.5;
+                transform: translate(120px, -50px) scale(0.7);
+            }
+            50% {
+                opacity: 0.15;
+                transform: translate(80px, 30px) scale(0.3);
+            }
+            70% {
+                opacity: 0;
+                transform: translate(-30px, 60px) scale(0);
+            }
+            100% {
+                transform: translate(0, 0) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* ============ 主容器 ============ */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 20px 24px 50px;
+        }
+
+        /* ============ 头部 ============ */
+        .header {
+            text-align: center;
+            padding: 40px 20px 24px;
+            position: relative;
+        }
+        .logo-wrap {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 14px;
+        }
+        .logo-emoji {
+            font-size: 56px;
+            display: block;
+            animation: logoBounce 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 20px rgba(139, 92, 246, 0.3));
+            cursor: default;
+            user-select: none;
+        }
+        @keyframes logoBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-14px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            70% {
+                transform: translateY(-7px);
+            }
+            85% {
+                transform: translateY(0);
+            }
+        }
+        .logo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            animation: ringSpin 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes ringSpin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+        .site-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        .site-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.04em;
+        }
+
+        /* ============ 滚动标语横幅 ============ */
+        .marquee-banner {
+            margin: 16px 0 28px;
+            background: var(--gradient-subtle);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .marquee-label {
+            flex-shrink: 0;
+            background: var(--gradient);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-left: 10px;
+            letter-spacing: 0.05em;
+            z-index: 2;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+        }
+        .marquee-track {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin-left: 14px;
+        }
+        .marquee-content {
+            display: flex;
+            white-space: nowrap;
+            animation: marqueeScroll linear infinite;
+            will-change: transform;
+            font-weight: 500;
+            color: #4a3f6b;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+            padding-right: 40px;
+        }
+        .marquee-content span {
+            display: inline-block;
+            padding-right: 50px;
+        }
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        .marquee-track::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 40px;
+            background: linear-gradient(to right, transparent, rgba(248, 249, 252, 0.9));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ============ 年度进度条区域 ============ */
+        .progress-section {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 22px 26px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.08);
+            transition: var(--transition);
+        }
+        .progress-section:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .progress-year {
+            font-weight: 800;
+            font-size: 1.3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.01em;
+        }
+        .progress-stats {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .progress-percent {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4a3f6b;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        .progress-percent-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .progress-bar-outer {
+            width: 100%;
+            height: 12px;
+            background: #eef1f8;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 20px;
+            position: relative;
+            transition: width 1.2s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 0 14px rgba(139, 92, 246, 0.35), 0 0 6px rgba(91, 141, 239, 0.25);
+        }
+        .progress-bar-inner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -60px;
+            width: 50px;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.55) 40%,
+                    rgba(255, 255, 255, 0.8) 50%,
+                    rgba(255, 255, 255, 0.55) 60%,
+                    transparent 100%);
+            animation: shimmer 2.4s ease-in-out infinite;
+            border-radius: 20px;
+        }
+        @keyframes shimmer {
+            0% {
+                left: -60px;
+            }
+            100% {
+                left: calc(100% + 20px);
+            }
+        }
+        .progress-bar-outer::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.7), 0 0 20px rgba(139, 92, 246, 0.4);
+            animation: dotPulse 2s ease-in-out infinite;
+            left: var(--progress-pos, 32%);
+            transition: left 1.2s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+        }
+        @keyframes dotPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(139, 92, 246, 0.6), 0 0 20px rgba(139, 92, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 18px rgba(139, 92, 246, 0.9), 0 0 35px rgba(91, 141, 239, 0.55), 0 0 50px rgba(139, 92, 246, 0.3);
+            }
+        }
+        .progress-info {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .progress-info span {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+        .days-remaining {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        /* ============ 链接卡片网格 ============ */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 16px;
+            color: #3a3450;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.02em;
+        }
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        /* 固定两列布局 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .link-card {
+            display: block;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(139, 92, 246, 0.06);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            border-radius: 0 0 3px 3px;
+        }
+        .link-card:hover,
+        .link-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg), 0 0 25px rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.25);
+            text-decoration: none;
+            color: var(--text);
+        }
+        .link-card:hover::before,
+        .link-card:focus-visible::before {
+            opacity: 1;
+        }
+        .link-card:active {
+            transform: scale(0.98);
+            transition: 0.15s ease;
+        }
+
+        .card-icon {
+            font-size: 1.55rem;
+            margin-bottom: 8px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            line-height: 1;
+        }
+        .link-card:hover .card-icon {
+            transform: scale(1.08);
+        }
+        .link-card:active .card-icon {
+            transform: scale(0.96);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            letter-spacing: 0.01em;
+            color: #2c2540;
+            line-height: 1.3;
+        }
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .card-tag {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 8px;
+            letter-spacing: 0.04em;
+            background: var(--purple-light);
+            color: #6b4fd4;
+            transition: var(--transition);
+        }
+        .link-card:hover .card-tag {
+            background: #e8dffa;
+            color: #5639c0;
+        }
+        .card-arrow {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: var(--transition);
+            color: #8b5cf6;
+            pointer-events: none;
+        }
+        .link-card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 空状态提示卡片 */
+        .add-link-hint {
+            background: var(--gradient-subtle);
+            border: 2px dashed rgba(139, 92, 246, 0.25);
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 140px;
+            cursor: default;
+            transition: var(--transition);
+        }
+        .add-link-hint:hover {
+            border-color: rgba(139, 92, 246, 0.45);
+            background: rgba(139, 92, 246, 0.04);
+        }
+        .add-link-hint .hint-icon {
+            font-size: 2rem;
+            opacity: 0.6;
+        }
+        .add-link-hint code {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-family: var(--font-mono);
+            color: #6b4fd4;
+        }
+
+        /* ============ 页脚 ============ */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            letter-spacing: 0.03em;
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+            margin-top: 10px;
+        }
+        .footer .heart {
+            color: #e74c8b;
+            display: inline-block;
+            animation: heartBeat 1.5s ease-in-out infinite;
+        }
+        @keyframes heartBeat {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            15% {
+                transform: scale(1.25);
+            }
+            30% {
+                transform: scale(1);
+            }
+            45% {
+                transform: scale(1.18);
+            }
+            60% {
+                transform: scale(1);
+            }
+        }
+        .footer a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .footer a:hover {
+            color: #5b8def;
+            text-decoration: underline;
+        }
+
+        /* ============ 响应式 ============ */
+        @media (max-width: 640px) {
+            .main-container {
+                padding: 12px 14px 36px;
+            }
+            .header {
+                padding: 24px 10px 16px;
+            }
+            .site-title {
+                font-size: 1.6rem;
+            }
+            .site-subtitle {
+                font-size: 0.85rem;
+            }
+            .logo-emoji {
+                font-size: 42px;
+            }
+            .logo-ring {
+                width: 66px;
+                height: 66px;
+            }
+            /* 小屏幕依然保持两列 */
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .link-card {
+                padding: 12px 10px;
+            }
+            .card-icon {
+                font-size: 1.4rem;
+            }
+            .card-title {
+                font-size: 0.88rem;
+            }
+            .card-desc {
+                font-size: 0.76rem;
+            }
+            .card-arrow {
+                top: 10px;
+                right: 10px;
+            }
+            .progress-section {
+                padding: 16px 14px;
+                border-radius: var(--radius);
+            }
+            .progress-percent {
+                font-size: 1.5rem;
+            }
+            .marquee-banner {
+                height: 38px;
+                margin: 10px 0 20px;
+                border-radius: var(--radius-sm);
+            }
+            .marquee-label {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+                margin-left: 6px;
+            }
+            .marquee-content {
+                font-size: 0.8rem;
+            }
+            .marquee-content span {
+                padding-right: 30px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .progress-header {
+                flex-direction: column;
+                gap: 2px;
+            }
+            .progress-stats {
+                align-self: flex-start;
+            }
+        }
+
+        /* 焦点可见样式 */
+        .link-card:focus-visible {
+            outline: 3px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 3px;
+        }
+
+        /* 打印样式 */
+        @media print {
+            .bg-grid,
+            .bg-orb,
+            .floating-dots,
+            .marquee-banner,
+            .progress-bar-outer::before,
+            .progress-bar-inner::after {
+                display: none !important;
+            }
+            body {
+                background: #fff;
+            }
+            .link-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 科技感背景层 -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="floating-dots">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo-wrap">
+                <span class="logo-emoji" title="打工人门户">🚀</span>
+                <div class="logo-ring"></div>
+            </div>
+            <h1 class="site-title">YeoChing · 博客门户</h1>
+            <p class="site-subtitle">搬砖路上，也要记得记录生活 ✨</p>
+        </header>
+
+        <!-- 滚动打工人标语 -->
+        <div class="marquee-banner" id="marqueeBanner">
+            <span class="marquee-label">💬 今日Slogans</span>
+            <div class="marquee-track">
+                <div class="marquee-content" id="marqueeContent">
+                    <!-- JS动态填充 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 年度进度条 -->
+        <section class="progress-section" id="progressSection">
+            <div class="progress-header">
+                <span class="progress-year">📅 2026 年进度</span>
+                <div class="progress-stats">
+                    <span class="progress-percent" id="progressPercent">--</span>
+                    <span class="progress-percent-sub">%</span>
+                </div>
+            </div>
+            <div class="progress-bar-outer" id="progressBarOuter">
+                <div class="progress-bar-inner" id="progressBarInner" style="width: 0%;"></div>
+            </div>
+            <div class="progress-info">
+                <span>已过去 <strong id="daysElapsed">--</strong> 天</span>
+                <span class="days-remaining">剩余 <strong id="daysRemaining">--</strong> 天</span>
+                <span>日均进度 <strong id="dailyAvg">--</strong>%</span>
+            </div>
+        </section>
+
+        <!-- 博客 & 项目链接 -->
+        <section>
+            <h2 class="section-title">📑 快速导航</h2>
+            <div class="cards-grid" id="cardsGrid">
+                <!-- JS动态渲染 -->
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>用 <span class="heart">❤️</span> 搭建于 2026 · 部署在
+                <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
+            </p>
+            <p style="font-size:0.75rem;margin-top:4px;">修改 <code style="background:rgba(139,92,246,0.08);padding:2px 6px;border-radius:4px;">linksData</code> 数组即可添加新页面链接 🎯</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // ============================================
+            //  🎯 在这里添加/修改你的本地HTML链接！
+            //  格式：{ title: '标题', url: '页面.html', desc: '描述', icon: 'emoji', tag: '标签(可选)' }
+            //  只需编辑这个数组，刷新页面即可看到新链接！
+            // ============================================
+            const linksData = [
+                {
+                    title: '📝 考勤时薪recording',
+                    url: 'Over_Time.html',
+                    desc: '我的第一篇博客门户，记录加班时数与薪得。',
+                    icon: '📝',
+                    tag: '考勤'
+                },
+                {
+                    title: '💻 单位换算',
+                    url: 'Unit_Trans.html',
+                    desc: '一键完成多项数据的公制_英制切换。',
+                    icon: '💻',
+                    tag: '单位'
+                },
+                {
+                    title: '🛠️ 项目展示',
+                    url: 'JMP_Pro.html',
+                    desc: '我做过的一些有趣的项目和实验。',
+                    icon: '🛠️',
+                    tag: '项目'
+                },
+                {
+                    title: '📚 阅读书单',
+                    url: 'reading.html',
+                    desc: '最近在读的书和阅读笔记整理。',
+                    icon: '📚',
+                    tag: '笔记'
+                },
+                {
+                    title: '🔗 友情链接',
+                    url: 'friends.html',
+                    desc: '朋友们的博客和推荐站点。',
+                    icon: '🔗',
+                    tag: '链接'
+                },
+                {
+                    title: '📬 留言板',
+                    url: 'guestbook.html',
+                    desc: '欢迎留下你的足迹和想法。',
+                    icon: '📬',
+                    tag: '互动'
+                },
+            ];
+
+            // ============================================
+            //  打工人标语库（每次刷新随机选一条）
+            // ============================================
+            const slogans = [
+                '今天睡地板，明天当老板。',
+                '拼一次，富三代，拼命才能不失败！💨',
+                '想成功，先发疯，不顾一切向钱冲！🏃',
+                '今日搬砖不狠，明天地位不稳 💪',
+                '代码敲得响，工资涨得慢 📉 — 那也得敲！',
+                '白天写Bug，晚上修Bug，第二天继续写Bug 🔄',
+                '摸鱼是一种生活态度 🐟 但别被老板发现',
+                '只要我敲得够快，Bug就追不上我 ⚡',
+                '打工人，打工魂，打工都是人上人 ✨',
+                '生命不息，搬砖不止 🧱',
+                '需求改了一百遍，我待需求如初恋 💔',
+                '今天也是元气满满的打工人！☀️（骗自己的）',
+                '咖啡续命，代码续梦 ☕',
+                '我不是在写代码，我是在创造世界 🌍',
+                ' Deadline是第一生产力 ⏰',
+                '键盘敲烂，工资过万 💰（希望如此）',
+                ' Git commit -m "又是打工的一天"',
+                '世界上本没有Bug，写的人多了就有了 🐛',
+                '卷不动了，开摆！🛋️ …算了还是再卷一会儿',
+                ' Ctrl+C、Ctrl+V 高级工程师 📋',
+                '我和成功之间，只差一个不报错的项目 🎯',
+                '周一到周五：生存；周末：生活 🌈',
+                '熬夜写代码的人，运气不会太差 🌙',
+                '老板画的饼，我一口都吃不下 🥞',
+                '需求评审一时爽，代码重构火葬场 🔥',
+                '今天你debug了吗？🐞',
+                '代码和人，有一个能跑就行 🏃',
+                '打工人终将崛起！🚀',
+            ];
+
+            // 标语选择逻辑（避免与上次重复）
+            function getRandomSlogan() {
+                const storageKey = 'blog_portal_last_slogan_index';
+                const lastIndex = parseInt(localStorage.getItem(storageKey), 10);
+                let newIndex;
+                if (slogans.length === 1) {
+                    newIndex = 0;
+                } else {
+                    do {
+                        newIndex = Math.floor(Math.random() * slogans.length);
+                    } while (newIndex === lastIndex && slogans.length > 1);
+                }
+                localStorage.setItem(storageKey, newIndex);
+                return slogans[newIndex];
+            }
+
+            // 渲染滚动标语
+            function renderMarquee() {
+                const slogan = getRandomSlogan();
+                const marqueeContent = document.getElementById('marqueeContent');
+                const repeatCount = 8;
+                const spans = [];
+                for (let i = 0; i < repeatCount; i++) {
+                    spans.push(`<span>${slogan}</span>`);
+                }
+                marqueeContent.innerHTML = spans.join('');
+                const charCount = slogan.length;
+                const baseSpeed = charCount * 1.8 + 15;
+                marqueeContent.style.animationDuration = baseSpeed + 's';
+            }
+
+            // 年度进度条计算
+            function updateProgress() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const startOfYear = new Date(year, 0, 1);
+                const endOfYear = new Date(year + 1, 0, 1);
+                const totalMs = endOfYear - startOfYear;
+                const elapsedMs = now - startOfYear;
+                const progressPercent = Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
+
+                const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+                const totalDays = isLeap ? 366 : 365;
+                const dayOfYear = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
+                const daysRemaining = totalDays - dayOfYear;
+                const dailyAvg = (100 / totalDays).toFixed(3);
+
+                document.getElementById('progressPercent').textContent = progressPercent.toFixed(2);
+                document.getElementById('daysElapsed').textContent = dayOfYear;
+                document.getElementById('daysRemaining').textContent = daysRemaining;
+                document.getElementById('dailyAvg').textContent = dailyAvg;
+
+                const progressBarInner = document.getElementById('progressBarInner');
+                setTimeout(() => {
+                    progressBarInner.style.width = progressPercent + '%';
+                }, 200);
+
+                const progressBarOuter = document.getElementById('progressBarOuter');
+                progressBarOuter.style.setProperty('--progress-pos', progressPercent + '%');
+
+                document.querySelector('.progress-year').textContent = '📅 ' + year + ' 年进度';
+            }
+
+            // 渲染链接卡片
+            function renderCards() {
+                const grid = document.getElementById('cardsGrid');
+                if (linksData.length === 0) {
+                    grid.innerHTML = `
+                            <div class="add-link-hint">
+                                <span class="hint-icon">📋</span>
+                                <span>还没有添加链接</span>
+                                <span>在 <code>linksData</code> 数组中添加你的HTML页面吧！</span>
+                            </div>`;
+                    return;
+                }
+                const cardsHTML = linksData.map(link => {
+                    const tagHTML = link.tag ?
+                        `<span class="card-tag">${link.tag}</span>` :
+                        '';
+                    return `
+                        <a href="${link.url}" class="link-card" title="跳转到：${link.title}">
+                            <span class="card-arrow">→</span>
+                            <span class="card-icon">${link.icon || '📄'}</span>
+                            <div class="card-title">${link.title}</div>
+                            <div class="card-desc">${link.desc || ''}</div>
+                            ${tagHTML}
+                        </a>`;
+                }).join('');
+                grid.innerHTML = cardsHTML;
+            }
+
+            // 初始化
+            function init() {
+                renderMarquee();
+                updateProgress();
+                renderCards();
+                setInterval(updateProgress, 60000);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            console.log(
+                '%c🚀 打工人博客门户已就绪 %c| %c' + new Date().toLocaleString(),
+                'font-size:1.2em;font-weight:bold;color:#8b5cf6;',
+                '',
+                'color:#5a6c7d;'
+            );
+            console.log('%c💡 提示：编辑 linksData 数组即可添加新的HTML链接', 'color:#5b8def;font-weight:500;');
+            console.log('%c📦 部署到GitHub Pages：将index.html推送到仓库即可', 'color:#6b4fd4;');
+        })();
+    </script>
+</body>
+</html>
