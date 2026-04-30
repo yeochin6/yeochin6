@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JMP 过程能力分析图</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --success: #34a853;
+            --danger: #ea4335;
+            --warning: #fbbc04;
+            --bg-light: #f8f9fa;
+            --bg-panel: #e8eaed;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .main-panel {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .chart-section {
+            padding: 24px;
+            background: var(--bg-light);
+        }
+
+        .chart-container {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%;
+        }
+
+        #chartCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .legend-color.sigma { background: var(--primary); }
+        .legend-color.lsl { background: var(--danger); }
+        .legend-color.target { background: var(--success); border: 1px dashed var(--success); background: transparent; }
+
+        .control-section {
+            background: white;
+            padding: 24px;
+            border-left: 1px solid var(--border);
+        }
+
+        .control-group {
+            margin-bottom: 24px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .data-input {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .data-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+        }
+
+        .data-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .limits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .limit-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .limit-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .limit-input-group label span {
+            color: var(--danger);
+        }
+
+        .limit-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            text-align: center;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .limit-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+        }
+
+        .limit-input.target:focus {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(52,168,83,0.15);
+        }
+
+        .limit-input.tolerance:focus {
+            border-color: var(--warning);
+            box-shadow: 0 0 0 3px rgba(251,188,4,0.15);
+        }
+
+        .computed-limits {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: var(--bg-light);
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        .computed-limits span {
+            color: var(--text-secondary);
+        }
+
+        .computed-limits strong {
+            color: var(--danger);
+        }
+
+        /* 滑块样式 */
+        .slider-control {
+            margin-top: 12px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .slider-header label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .slider-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(26,115,232,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .slider-control input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-panel);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(26,115,232,0.3);
+        }
+
+        .slider-control input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26,115,232,0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-panel);
+            color: var(--text-primary);
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: #d5d8dc;
+        }
+
+        .stats-panel {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .stats-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-item.full {
+            grid-column: span 2;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-value.highlight {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .stat-value.success {
+            color: var(--success);
+        }
+
+        .stat-value.danger {
+            color: var(--danger);
+        }
+
+        .error-message {
+            background: #fce8e6;
+            color: var(--danger);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .main-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .control-section {
+                border-left: none;
+                border-top: 1px solid var(--border);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JMP 过程能力分析</h1>
+            <p>支持粘贴数据 · 离线运行 · 实时计算</p>
+            <p>- Created by © R&D梅永清(KS) -</p>
+        </div>
+
+        <div class="main-panel">
+            <div class="chart-section">
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <rect x="7" y="10" width="3" height="8" rx="1"/>
+                            <rect x="12" y="6" width="3" height="12" rx="1"/>
+                            <rect x="17" y="12" width="3" height="6" rx="1"/>
+                        </svg>
+                        直方图与正态分布
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartCanvas"></canvas>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="legend-color sigma"></span>
+                            <span>正态分布曲线</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color lsl" style="background: repeating-linear-gradient(90deg, #ea4335, #ea4335 4px, transparent 4px, transparent 8px);"></span>
+                            <span>规格限 (USL/LSL)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color target"></span>
+                            <span>平均值</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="control-group">
+                    <label class="control-label">数据输入 (粘贴Excel/CSV数据)</label>
+                    <textarea id="dataInput" class="data-input" placeholder="粘贴数据，例如：&#10;10.5&#10;10.6&#10;10.7&#10;10.8&#10;..."></textarea>
+                    <div class="data-hint">支持多列数据，将自动合并计算</div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">规格参数设置</label>
+                    <div class="limits-grid">
+                        <div class="limit-input-group">
+                            <label><span>*</span> 标准值 (Target)</label>
+                            <input type="number" id="targetInput" class="limit-input target" placeholder="目标值" step="any">
+                        </div>
+                        <div class="limit-input-group">
+                            <label><span>*</span> 公差 (Tolerance)</label>
+                            <input type="number" id="toleranceInput" class="limit-input tolerance" placeholder="半公差" step="any">
+                        </div>
+                    </div>
+                    <div class="computed-limits">
+                        <span>LSL: <strong id="computedLsl">-</strong></span>
+                        <span>USL: <strong id="computedUsl">-</strong></span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="slider-control">
+                        <div class="slider-header">
+                            <label>柱状图密度缩放</label>
+                            <span id="densityValue" class="slider-value">1.0x</span>
+                        </div>
+                        <input type="range" id="densitySlider" min="0.1" max="3" step="0.1" value="1">
+                    </div>
+                    <div class="slider-control">
+                        <div class="slider-header">
+                            <label>柱状图细分度 (柱数)</label>
+                            <span id="binsValue" class="slider-value">15</span>
+                        </div>
+                        <input type="range" id="binsSlider" min="5" max="50" step="1" value="15">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        生成图表
+                    </button>
+                    <button id="sampleBtn" class="btn btn-secondary">
+                        加载示例数据
+                    </button>
+                </div>
+
+                <div id="errorMessage" class="error-message"></div>
+
+                <div class="stats-panel">
+                    <div class="stats-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10M18 20V4M6 20v-4"/>
+                        </svg>
+                        过程汇总
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">样本数</span>
+                            <span id="statN" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均值</span>
+                            <span id="statMean" class="stat-value highlight">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">最大值</span>
+                            <span id="statMax" class="stat-value success">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">最小值</span>
+                            <span id="statMin" class="stat-value danger">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">组内 Sigma</span>
+                            <span id="statSigmaWithin" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">总 Sigma</span>
+                            <span id="statSigmaTotal" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item full">
+                            <span class="stat-label">Cp / Cpk</span>
+                            <span id="statCp" class="stat-value" style="font-size: 1.4rem;">- / -</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const Statistics = {
+            mean(arr) {
+                if (arr.length === 0) return 0;
+                return arr.reduce((a, b) => a + b, 0) / arr.length;
+            },
+
+            std(arr) {
+                if (arr.length === 0) return 0;
+                const m = this.mean(arr);
+                const variance = arr.reduce((sum, val) => sum + Math.pow(val - m, 2), 0) / arr.length;
+                return Math.sqrt(variance);
+            },
+
+            withinSigma(arr) {
+                if (arr.length < 2) return this.std(arr);
+                let sumMR = 0;
+                for (let i = 1; i < arr.length; i++) {
+                    sumMR += Math.abs(arr[i] - arr[i - 1]);
+                }
+                const d2 = 1.128;
+                return sumMR / ((arr.length - 1) * d2);
+            },
+
+            normalPDF(x, mean, sigma) {
+                if (sigma <= 0) return 0;
+                const coefficient = 1 / (sigma * Math.sqrt(2 * Math.PI));
+                const exponent = -Math.pow(x - mean, 2) / (2 * Math.pow(sigma, 2));
+                return coefficient * Math.exp(exponent);
+            },
+
+            cp(usl, lsl, sigma) {
+                if (sigma <= 0) return Infinity;
+                return (usl - lsl) / (6 * sigma);
+            },
+
+            cpk(usl, lsl, mean, sigma) {
+                if (sigma <= 0) return Infinity;
+                const cpu = (usl - mean) / (3 * sigma);
+                const cpl = (mean - lsl) / (3 * sigma);
+                return Math.min(cpu, cpl);
+            },
+
+            min(arr) {
+                return arr.length > 0 ? Math.min(...arr) : 0;
+            },
+
+            max(arr) {
+                return arr.length > 0 ? Math.max(...arr) : 0;
+            }
+        };
+
+        class JMPChart {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.padding = { top: 55, right: 30, bottom: 45, left: 50 };
+                this.data = [];
+                this.lsl = 0;
+                this.usl = 0;
+                this.densityScale = 1;
+                this.numBins = 15;
+            }
+
+            setData(data, lsl, usl) {
+                this.data = data;
+                this.lsl = lsl;
+                this.usl = usl;
+            }
+
+            setDensityScale(scale) {
+                this.densityScale = scale;
+            }
+
+            setNumBins(num) {
+                this.numBins = num;
+            }
+
+            draw() {
+                const dpr = window.devicePixelRatio || 1;
+                const rect = this.canvas.parentElement.getBoundingClientRect();
+
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = rect.height * dpr;
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = rect.height + 'px';
+
+                this.ctx.scale(dpr, dpr);
+                this.width = rect.width;
+                this.height = rect.height;
+
+                this.chartWidth = this.width - this.padding.left - this.padding.right;
+                this.chartHeight = this.height - this.padding.top - this.padding.bottom;
+
+                this.ctx.clearRect(0, 0, this.width, this.height);
+
+                if (this.data.length < 2) {
+                    this.drawEmptyState();
+                    return;
+                }
+
+                this.calculateHistogram();
+                this.drawAxes();
+                this.drawHistogram();
+                this.drawNormalCurve();
+                this.drawLimitLines();
+            }
+
+            drawEmptyState() {
+                this.ctx.fillStyle = '#9aa0a6';
+                this.ctx.font = '16px "PingFang SC", sans-serif';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('请输入数据并点击"生成图表"', this.width / 2, this.height / 2);
+            }
+
+            calculateHistogram() {
+                const dataMin = Statistics.min(this.data);
+                const dataMax = Statistics.max(this.data);
+                const dataRange = dataMax - dataMin || 1;
+
+                const expandRange = Math.max(dataRange * 0.3, Math.abs(this.usl - this.lsl) * 0.5);
+
+                this.xMin = Math.min(dataMin - expandRange, this.lsl - expandRange * 0.3);
+                this.xMax = Math.max(dataMax + expandRange, this.usl + expandRange * 0.3);
+
+                const binWidth = (this.xMax - this.xMin) / this.numBins;
+
+                this.bins = [];
+                this.binCounts = [];
+
+                for (let i = 0; i < this.numBins; i++) {
+                    this.bins.push(this.xMin + i * binWidth);
+                    this.binCounts.push(0);
+                }
+                this.bins.push(this.xMax);
+
+                this.data.forEach(val => {
+                    let binIndex = Math.floor((val - this.xMin) / binWidth);
+                    if (binIndex >= this.numBins) binIndex = this.numBins - 1;
+                    if (binIndex < 0) binIndex = 0;
+                    this.binCounts[binIndex]++;
+                });
+
+                const total = this.data.length;
+                this.binDensity = this.binCounts.map(c => c / (total * binWidth));
+                this.maxDensity = Math.max(...this.binDensity);
+
+                const mean = Statistics.mean(this.data);
+                const sigma = Statistics.withinSigma(this.data);
+                const curvePeak = Statistics.normalPDF(mean, mean, sigma);
+                this.maxY = Math.max(this.maxDensity * this.densityScale, curvePeak) * 1.2;
+
+                this.binWidthDraw = binWidth;
+            }
+
+            drawAxes() {
+                const ctx = this.ctx;
+
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(this.padding.left, this.height - this.padding.bottom);
+                ctx.lineTo(this.width - this.padding.right, this.height - this.padding.bottom);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(this.padding.left, this.height - this.padding.bottom);
+                ctx.lineTo(this.padding.left, this.padding.top);
+                ctx.stroke();
+
+                // 计算合适的刻度数
+                const xTicks = Math.min(10, Math.max(5, Math.floor(this.chartWidth / 60)));
+                ctx.fillStyle = '#5f6368';
+                ctx.font = '10px "PingFang SC", sans-serif';
+
+                for (let i = 0; i <= xTicks; i++) {
+                    const x = this.padding.left + (this.chartWidth * i / xTicks);
+                    const value = this.xMin + (this.xMax - this.xMin) * i / xTicks;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x, this.height - this.padding.bottom);
+                    ctx.lineTo(x, this.height - this.padding.bottom + 5);
+                    ctx.stroke();
+
+                    // 判断是否需要斜向标签
+                    const text = value.toFixed(2);
+                    const estimatedWidth = text.length * 6;
+                    const needRotation = (this.chartWidth / xTicks) < estimatedWidth + 10;
+
+                    ctx.save();
+                    ctx.textAlign = 'right';
+                    ctx.translate(x, this.height - this.padding.bottom + 18);
+                    if (needRotation && i > 0 && i < xTicks) {
+                        ctx.rotate(-45 * Math.PI / 180);
+                        ctx.textAlign = 'right';
+                    }
+                    ctx.fillText(text, 0, 0);
+                    ctx.restore();
+                }
+            }
+
+            drawHistogram() {
+                const ctx = this.ctx;
+
+                ctx.fillStyle = 'rgba(52, 168, 83, 0.4)';
+                ctx.strokeStyle = '#34a853';
+                ctx.lineWidth = 1;
+
+                this.bins.forEach((binStart, i) => {
+                    if (i >= this.binCounts.length) return;
+
+                    const x = this.valueToX(binStart);
+                    const nextBin = this.bins[i + 1] || (binStart + this.binWidthDraw);
+                    const x2 = this.valueToX(nextBin);
+                    const barWidth = Math.max(1, x2 - x - 1);
+                    const height = (this.binDensity[i] * this.densityScale / this.maxY) * this.chartHeight;
+
+                    ctx.beginPath();
+                    ctx.rect(x, this.height - this.padding.bottom - height, barWidth, height);
+                    ctx.fill();
+                    ctx.stroke();
+                });
+            }
+
+            drawNormalCurve() {
+                const ctx = this.ctx;
+                const mean = Statistics.mean(this.data);
+                const sigma = Statistics.withinSigma(this.data);
+
+                ctx.strokeStyle = '#1a73e8';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+
+                const points = 200;
+                for (let i = 0; i <= points; i++) {
+                    const x = this.xMin + (this.xMax - this.xMin) * i / points;
+                    const y = Statistics.normalPDF(x, mean, sigma);
+                    const screenX = this.valueToX(x);
+                    const screenY = this.height - this.padding.bottom - (y / this.maxY) * this.chartHeight;
+
+                    if (i === 0) {
+                        ctx.moveTo(screenX, screenY);
+                    } else {
+                        ctx.lineTo(screenX, screenY);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            drawLimitLines() {
+                const ctx = this.ctx;
+                const mean = Statistics.mean(this.data);
+
+                if (this.lsl !== null && !isNaN(this.lsl)) {
+                    const x = this.valueToX(this.lsl);
+                    ctx.strokeStyle = '#ea4335';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, this.padding.top + 25);
+                    ctx.lineTo(x, this.height - this.padding.bottom);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ea4335';
+                    ctx.font = 'bold 11px "PingFang SC", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('LSL ' + this.lsl.toFixed(2), x, this.padding.top - 8);
+                }
+
+                if (this.usl !== null && !isNaN(this.usl)) {
+                    const x = this.valueToX(this.usl);
+                    ctx.strokeStyle = '#ea4335';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, this.padding.top + 25);
+                    ctx.lineTo(x, this.height - this.padding.bottom);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ea4335';
+                    ctx.font = 'bold 11px "PingFang SC", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('USL ' + this.usl.toFixed(2), x, this.padding.top - 8);
+                }
+
+                const x = this.valueToX(mean);
+                ctx.strokeStyle = '#34a853';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(x, this.padding.top + 25);
+                ctx.lineTo(x, this.height - this.padding.bottom);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#34a853';
+                ctx.font = 'bold 11px "PingFang SC", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('均值 ' + mean.toFixed(3), x, this.padding.top + 12);
+            }
+
+            valueToX(value) {
+                return this.padding.left + ((value - this.xMin) / (this.xMax - this.xMin)) * this.chartWidth;
+            }
+
+            resize() {
+                this.draw();
+            }
+        }
+
+        class JMPApp {
+            constructor() {
+                this.chart = new JMPChart('chartCanvas');
+                this.data = [];
+
+                this.bindEvents();
+                this.loadFromStorage();
+                this.chart.draw();
+            }
+
+            bindEvents() {
+                document.getElementById('generateBtn').addEventListener('click', () => this.generateChart());
+                document.getElementById('sampleBtn').addEventListener('click', () => this.loadSampleData());
+                document.getElementById('dataInput').addEventListener('paste', (e) => {
+                    setTimeout(() => this.handlePaste(), 0);
+                });
+                document.getElementById('targetInput').addEventListener('input', () => this.updateComputedLimits());
+                document.getElementById('toleranceInput').addEventListener('input', () => this.updateComputedLimits());
+
+                document.getElementById('densitySlider').addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    document.getElementById('densityValue').textContent = value.toFixed(1) + 'x';
+                    if (this.data.length > 0) {
+                        this.chart.setDensityScale(value);
+                        this.chart.draw();
+                    }
+                });
+
+                document.getElementById('binsSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    document.getElementById('binsValue').textContent = value;
+                    if (this.data.length > 0) {
+                        this.chart.setNumBins(value);
+                        this.chart.draw();
+                    }
+                });
+
+                window.addEventListener('resize', () => {
+                    if (this.data.length > 0) {
+                        this.chart.resize();
+                    }
+                });
+            }
+
+            handlePaste() {
+                if (this.data.length > 0) {
+                    this.generateChart();
+                }
+            }
+
+            updateComputedLimits() {
+                const target = parseFloat(document.getElementById('targetInput').value);
+                const tolerance = parseFloat(document.getElementById('toleranceInput').value);
+
+                if (!isNaN(target) && !isNaN(tolerance) && tolerance >= 0) {
+                    const lsl = target - tolerance;
+                    const usl = target + tolerance;
+                    document.getElementById('computedLsl').textContent = lsl.toFixed(4);
+                    document.getElementById('computedUsl').textContent = usl.toFixed(4);
+
+                    if (this.data.length > 0) {
+                        this.chart.setData(this.data, lsl, usl);
+                        this.chart.draw();
+                        this.calculateStatistics();
+                    }
+                } else {
+                    document.getElementById('computedLsl').textContent = '-';
+                    document.getElementById('computedUsl').textContent = '-';
+                }
+            }
+
+            loadSampleData() {
+                const sampleData = [];
+                const mean = 10.95;
+                const sigma = 0.015;
+
+                for (let i = 0; i < 50; i++) {
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    sampleData.push(mean + z * sigma);
+                }
+
+                document.getElementById('dataInput').value = sampleData.map(v => v.toFixed(4)).join('\n');
+                document.getElementById('targetInput').value = '10.95';
+                document.getElementById('toleranceInput').value = '0.05';
+                document.getElementById('binsSlider').value = 20;
+                document.getElementById('binsValue').textContent = '20';
+                this.updateComputedLimits();
+                this.generateChart();
+            }
+
+            generateChart() {
+                const dataInput = document.getElementById('dataInput').value.trim();
+                const targetInput = document.getElementById('targetInput').value;
+                const toleranceInput = document.getElementById('toleranceInput').value;
+
+                if (!dataInput) {
+                    this.showError('请输入数据');
+                    return;
+                }
+
+                try {
+                    this.data = this.parseData(dataInput);
+                } catch (e) {
+                    this.showError('数据格式错误: ' + e.message);
+                    return;
+                }
+
+                if (this.data.length < 2) {
+                    this.showError('数据量不足，至少需要2个数据点');
+                    return;
+                }
+
+                let lsl, usl;
+                const target = targetInput ? parseFloat(targetInput) : null;
+                const tolerance = toleranceInput ? parseFloat(toleranceInput) : null;
+
+                if (target !== null && tolerance !== null && tolerance >= 0) {
+                    lsl = target - tolerance;
+                    usl = target + tolerance;
+                } else {
+                    lsl = Statistics.min(this.data);
+                    usl = Statistics.max(this.data);
+                    document.getElementById('targetInput').value = ((lsl + usl) / 2).toFixed(4);
+                    document.getElementById('toleranceInput').value = ((usl - lsl) / 2).toFixed(4);
+                    this.updateComputedLimits();
+                }
+
+                this.hideError();
+                this.saveToStorage();
+                this.calculateStatistics();
+
+                const densityScale = parseFloat(document.getElementById('densitySlider').value);
+                const numBins = parseInt(document.getElementById('binsSlider').value);
+                this.chart.setDensityScale(densityScale);
+                this.chart.setNumBins(numBins);
+                this.chart.setData(this.data, lsl, usl);
+                this.chart.draw();
+            }
+
+            parseData(text) {
+                const lines = text.split(/[\n\r\t,;]+/);
+                const data = [];
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed === '') continue;
+
+                    const value = parseFloat(trimmed);
+                    if (isNaN(value)) {
+                        throw new Error(`无法解析值: "${trimmed}"`);
+                    }
+                    data.push(value);
+                }
+
+                return data;
+            }
+
+            calculateStatistics() {
+                const n = this.data.length;
+                const mean = Statistics.mean(this.data);
+                const min = Statistics.min(this.data);
+                const max = Statistics.max(this.data);
+                const sigmaWithin = Statistics.withinSigma(this.data);
+                const sigmaTotal = Statistics.std(this.data);
+
+                let lsl, usl;
+                const target = parseFloat(document.getElementById('targetInput').value);
+                const tolerance = parseFloat(document.getElementById('toleranceInput').value);
+
+                if (!isNaN(target) && !isNaN(tolerance) && tolerance >= 0) {
+                    lsl = target - tolerance;
+                    usl = target + tolerance;
+                } else {
+                    lsl = min;
+                    usl = max;
+                }
+
+                const cp = Statistics.cp(usl, lsl, sigmaWithin);
+                const cpk = Statistics.cpk(usl, lsl, mean, sigmaWithin);
+
+                document.getElementById('statN').textContent = n;
+                document.getElementById('statMean').textContent = mean.toFixed(4);
+                document.getElementById('statMax').textContent = max.toFixed(4);
+                document.getElementById('statMin').textContent = min.toFixed(4);
+                document.getElementById('statSigmaWithin').textContent = sigmaWithin.toFixed(4);
+                document.getElementById('statSigmaTotal').textContent = sigmaTotal.toFixed(4);
+                document.getElementById('statCp').innerHTML = `${cp.toFixed(3)} / <span class="${cpk < 1 ? 'danger' : 'success'}">${cpk.toFixed(3)}</span>`;
+            }
+
+            showError(message) {
+                const errorEl = document.getElementById('errorMessage');
+                errorEl.textContent = message;
+                errorEl.classList.add('show');
+            }
+
+            hideError() {
+                document.getElementById('errorMessage').classList.remove('show');
+            }
+
+            saveToStorage() {
+                try {
+                    localStorage.setItem('jmp_data', document.getElementById('dataInput').value);
+                    localStorage.setItem('jmp_target', document.getElementById('targetInput').value);
+                    localStorage.setItem('jmp_tolerance', document.getElementById('toleranceInput').value);
+                } catch (e) {}
+            }
+
+            loadFromStorage() {
+                try {
+                    const savedData = localStorage.getItem('jmp_data');
+                    const savedTarget = localStorage.getItem('jmp_target');
+                    const savedTolerance = localStorage.getItem('jmp_tolerance');
+
+                    if (savedData) document.getElementById('dataInput').value = savedData;
+                    if (savedTarget) document.getElementById('targetInput').value = savedTarget;
+                    if (savedTolerance) document.getElementById('toleranceInput').value = savedTolerance;
+
+                    this.updateComputedLimits();
+                } catch (e) {}
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new JMPApp();
+        });
+    </script>
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.inland-security-footer {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 0;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.trigger-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.minimax-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 300;
+  color: #adadad;
+  text-decoration: none;
+}
+
+.minimax-link:visited {
+  color: #adadad;
+}
+
+.minimax-link:hover {
+  color: #666666;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
+  font-size: 12px;
+  line-height: 17px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #171717;
+}
+
+/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: flex;
+}
+
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.beian-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #171717;
+}
+
+.beian-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+.underline-text {
+  color: #171717;
+  text-decoration: underline;
+}
+
+.underline-text:hover {
+  color: #000000;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .trigger-content {
+    background-color: transparent;
+  }
+
+  .minimax-link,
+  .minimax-link:visited {
+    color: #666666;
+  }
+
+  .minimax-link:hover {
+    color: #adadad;
+  }
+
+  .tooltip-content {
+    background-color: #262626;
+    color: #ededed;
+  }
+
+  .beian-link,
+  .underline-text {
+    color: #ededed;
+  }
+
+  .underline-text:hover {
+    color: #ffffff;
+  }
+}
+
+</style>
+<div class="inland-security-footer">
+  <div class="tooltip-container">
+    <div class="trigger-content">
+        <span>© R&D YeoChing(KS)</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+</body>
+</html>
