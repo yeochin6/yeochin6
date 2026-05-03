@@ -2,439 +2,654 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>打工人单位换算器</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打工人单位换算器 · 公制/英制</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <style>
-    body {
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
-      margin: 0; 
+    :root {
+      --bg: #f4f7fb;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-soft: #475569;
+      --text-muted: #94a3b8;
+      --primary: #5b6af0;
+      --primary-soft: #eef0ff;
+      --accent: #f472b6;
+      --border: #e2e8f0;
+      --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.03);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --transition: 0.2s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
       padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(91, 106, 240, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(244, 114, 182, 0.04) 0%, transparent 50%);
+      font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
       min-height: 100vh;
-      color: #e2e8f0;
-    }
-    .slogan {
-      color: #f0f9ff;
-      background: linear-gradient(90deg, #6366f1 0%, #a855f7 50%, #7c3aed 100%);
-      font-size: 1.25em;
-      font-weight: bold;
-      padding: 18px 4vw;
-      border-bottom-left-radius: 40px 120px;
-      border-bottom-right-radius: 40px 120px;
-      box-shadow: 0 4px 25px rgba(139, 92, 246, 0.5);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      text-align: center;
-      letter-spacing: 1.5px;
-      position: relative;
-      overflow: hidden;
-    }
-    .slogan::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: shimmer 8s infinite linear;
-    }
-    @keyframes shimmer {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .container {
-      max-width: 720px;
-      margin: 2.5rem auto;
-      background: rgba(30, 27, 55, 0.85);
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      border-radius: 16px;      box-shadow: 0 8px 40px rgba(124, 58, 237, 0.3), 
-                  0 0 60px rgba(99, 102, 241, 0.15);
-      padding: 32px 5vw 30px 5vw;
-      backdrop-filter: blur(12px);
-      position: relative;
-    }
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, #6366f1, #7c3aed, #06b6d4);
-      border-radius: 16px 16px 0 0;
-    }
-    h2 {
-      text-align: center;
-      color: #e0e7ff;
-      letter-spacing: 2px;
-      margin-bottom: 1.2em;
-      text-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
-      font-size: 1.4em;
-    }
-    label {
-      display: block;
-      font-weight: 500;
-      color: #c7d2fe;
-      margin-bottom: 10px;
-      font-size: 1em;
-    }
-    .input-row {
+      color: var(--text);
       display: flex;
-      flex-wrap: wrap;
-      gap: 1.2em;
-      align-items: flex-end;
-      margin-bottom: 2em;
-      position: relative;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 16px;
+      -webkit-tap-highlight-color: transparent;
     }
-    textarea {
-      flex: 2 1 200px;
-      min-height: 80px;
-      max-height: 200px;
-      border: 1.5px solid #818cf8;
-      font-size: 1.05em;
-      border-radius: 8px;
-      padding: 10px;
-      resize: vertical;
-      background: rgba(17, 24, 39, 0.7);
-      color: #f1f5f9;
-      transition: all 0.25s ease;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-    }    textarea:focus { 
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5), 
-                  0 0 15px rgba(167, 139, 250, 0.4); 
-      outline: none;
-      border-color: #a78bfa;
-      background: rgba(23, 30, 50, 0.9);
-    }
-    
-    /* 🔘 圆形单位切换按钮 */
-    .unit-toggle {
-      width: 44px;
-      height: 44px;
+
+    .particle {
+      position: fixed;
+      pointer-events: none;
       border-radius: 50%;
-      border: 2px solid #818cf8;
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(55, 48, 88, 0.95));
-      color: #e0e7ff;
-      font-weight: bold;
-      font-size: 0.85em;
+      opacity: 0.25;
+      animation: float 7s infinite ease-in-out;
+      z-index: 0;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+      25% { transform: translateY(-22px) translateX(12px) scale(1.25); opacity: 0.4; }
+      50% { transform: translateY(-6px) translateX(-8px) scale(0.8); opacity: 0.2; }
+      75% { transform: translateY(-28px) translateX(-14px) scale(1.15); opacity: 0.35; }
+    }
+
+    .slogan {
+      background: linear-gradient(135deg, #5b6af0, #7c3aed);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 40px 40px 24px 24px;
+      font-weight: 700;
+      font-size: 1em;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(91, 106, 240, 0.2);
+      margin-bottom: 20px;
+      max-width: 600px;
+      width: 100%;
+      letter-spacing: 0.5px;
       cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s;
+      position: relative;
+      z-index: 2;
+    }
+    .slogan:active {
+      transform: scale(0.97);
+    }
+    .slogan .emoji {
+      display: inline-block;
+      animation: bounce 1.6s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .container {
+      max-width: 620px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+      padding: 24px 22px 20px;
+      border: 1px solid var(--border);
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .title {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.25s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3), 
-                  0 0 0 4px rgba(139, 92, 246, 0.15);
-      position: relative;
-      z-index: 10;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1.2em;
+      color: #3b3f5c;
+      letter-spacing: 0.5px;
+    }
+    .title span {
+      font-size: 1.3em;
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 10px;
+    }
+    textarea {
+      flex: 3 1 200px;
+      min-height: 80px;
+      max-height: 150px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 0.95em;
+      background: #fafbfc;
+      color: var(--text);
+      resize: vertical;
+      transition: all var(--transition);
+      font-family: 'SF Mono', 'Consolas', 'Microsoft YaHei', monospace;
+      line-height: 1.5;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #a5b4fc;
+      box-shadow: 0 0 0 3px rgba(91,106,240,0.15);
+      background: #fff;
+    }
+    textarea::placeholder {
+      color: #b0bcc8;
+      font-style: italic;
+      font-family: 'Microsoft YaHei', sans-serif;
+      font-size: 0.9em;
+    }
+
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       flex-shrink: 0;
     }
-    .unit-toggle:hover {
-      border-color: #a78bfa;
-      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5),
-                  0 0 0 4px rgba(167, 139, 250, 0.25);
-      transform: scale(1.05);
-    }
-    .unit-toggle.active {
-      border-color: #06b6d4;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      box-shadow: 0 0 20px rgba(124, 58, 237, 0.7);
-    }
-    
-    /* 📋 单位选择菜单（隐藏默认） */
-    .unit-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      background: rgba(30, 27, 55, 0.98);
-      border: 1px solid rgba(139, 92, 246, 0.4);
-      border-radius: 12px;
-      padding: 8px 0;      min-width: 160px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.4),
-                  0 0 30px rgba(124, 58, 237, 0.3);
-      display: none;
-      z-index: 20;
-      animation: slideDown 0.2s ease;
-      backdrop-filter: blur(8px);
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .unit-menu.show {
-      display: block;
-    }
-    .unit-item {
-      padding: 10px 16px;
-      color: #e2e8f0;
-      font-size: 0.95em;
+    .action-btn {
+      flex: 1;
+      min-height: 38px;
+      padding: 8px 16px;
+      border-radius: 24px;
+      border: 1.5px solid var(--border);
+      background: #f8fafc;
+      color: var(--text-soft);
+      font-weight: 600;
+      font-size: 0.82em;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all var(--transition);
+      white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      justify-content: center;
+      letter-spacing: 0.3px;
     }
-    .unit-item:hover {
-      background: linear-gradient(90deg, rgba(124, 58, 237, 0.2), transparent);
-      color: #f0f9ff;
-      padding-left: 20px;
+    .action-btn:hover {
+      background: var(--primary-soft);
+      border-color: #a5b4fc;
+      color: #4f46e5;
+      box-shadow: 0 4px 12px rgba(91,106,240,0.1);
     }
-    .unit-item.active {
-      color: #a78bfa;
+    .action-btn.clear-btn {
+      color: #b91c1c;
+    }
+    .action-btn.clear-btn:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+    .action-btn.copy-btn {
+      color: #4f46e5;
+    }
+
+    .unit-picker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #f8fafc;
+      border-radius: 40px;
+      padding: 6px 14px;
+      border: 1px solid #e2e8f0;
+    }
+    .unit-label {
       font-weight: 600;
-      background: rgba(139, 92, 246, 0.15);
+      font-size: 0.85em;
+      color: var(--text-soft);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
-    .unit-item::before {
-      content: '◦';
-      color: #818cf8;
-      font-size: 1.4em;
-      opacity: 0;
-      transition: opacity 0.2s;
+    .unit-selector {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
     }
-    .unit-item.active::before,
-    .unit-item:hover::before {
-      opacity: 1;
+    .unit-chip {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 24px;
+      font-weight: 600;
+      font-size: 0.82em;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: all var(--transition);
+      letter-spacing: 0.3px;
     }
-    
+    .unit-chip.active {
+      background: #5b6af0;
+      color: white;
+      box-shadow: 0 4px 12px rgba(91,106,240,0.25);
+    }
+    .unit-chip:hover:not(.active) {
+      background: #eef0ff;
+      color: #4f46e5;
+    }
+
+    .hint {
+      font-size: 0.78em;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      background: #f1f5f9;
+      border-radius: 20px;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+    .hint strong {
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .counter {
+      font-size: 0.78em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .counter .badge {
+      background: var(--primary-soft);
+      color: #4f46e5;
+      border-radius: 14px;
+      padding: 2px 10px;
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-sm);
+      border: 1px solid #edf2f7;
+      background: #fff;
+    }
     table {
-      margin-top: 2em;
-      border-collapse: collapse;      width: 100%;
-      background: rgba(30, 27, 55, 0.6);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(124, 58, 237, 0.25);
-      font-size: 1em;
-      word-break: break-all;
-      border: 1px solid rgba(139, 92, 246, 0.25);
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88em;
+      table-layout: fixed;
+      min-width: 100%;
     }
     th, td {
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-      padding: 12px 8px;
+      padding: 10px 4px;
       text-align: center;
-      color: #e2e8f0;
-      transition: background 0.2s;
+      border-bottom: 1px solid #f1f5f9;
+      word-break: break-word;
+      letter-spacing: 0.2px;
     }
     th {
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: #fff;
-      font-weight: bold;
-      font-size: 1.08em;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-      position: relative;
+      background: #f8fafc;
+      color: #4f46e5;
+      font-weight: 700;
+      font-size: 0.8em;
+      text-transform: lowercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
     }
-    th::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    th:nth-child(1) { width: 28%; }
+    th:nth-child(2) { width: 24%; }
+    th:nth-child(3) { width: 24%; }
+    th:nth-child(4) { width: 24%; }
+
+    td:first-child {
+      font-weight: 600;
+      color: #4f46e5;
+      white-space: nowrap;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr {
+      transition: background 0.15s;
+      cursor: pointer;
     }
     tr:hover td {
-      background: rgba(139, 92, 246, 0.12);
+      background: #f5f7ff;
     }
-    tr:last-child td { border-bottom: none; }
-    
-    textarea::placeholder {
-      color: rgba(203, 213, 225, 0.6);
+    tr:active td {
+      background: #eef0ff;
     }
-    
-    @media (max-width: 700px) {
-      .container { padding: 16px 2vw; }
-      h2 { font-size: 1.2em; }
-      th, td { font-size: 0.92em; padding: 8px 4px; }
-      .input-row { flex-direction: column; align-items: stretch; }
-      .unit-toggle { 
-        align-self: flex-end; 
-        margin-top: -38px; 
-        margin-right: 8px;
-      }      .unit-menu {
-        right: 4px;
-        min-width: 140px;
-      }
+    .empty-row td {
+      color: #94a3b8;
+      padding: 24px;
+      font-style: italic;
     }
-    
-    .glow-dot {
+
+    .toast {
       position: fixed;
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: rgba(167, 139, 250, 0.8);
-      box-shadow: 0 0 10px 2px rgba(139, 92, 246, 0.6);
-      animation: float 6s infinite ease-in-out;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: #1e293b;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.85em;
+      z-index: 100;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       pointer-events: none;
-      z-index: -1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.6; }
-      50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 16px 12px;
+      }
+      .input-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .action-btns {
+        flex-direction: row;
+      }
+      .action-btn {
+        padding: 8px 12px;
+        font-size: 0.78em;
+      }
+      .unit-picker {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .unit-selector {
+        justify-content: flex-start;
+      }
+      table {
+        font-size: 0.76em;
+      }
+      th, td {
+        padding: 8px 2px;
+      }
     }
   </style>
 </head>
 <body>
-<script>
-  for(let i=0; i<15; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'glow-dot';
-    dot.style.left = Math.random() * 100 + 'vw';
-    dot.style.top = Math.random() * 100 + 'vh';
-    dot.style.animationDelay = Math.random() * 6 + 's';
-    dot.style.animationDuration = (4 + Math.random() * 4) + 's';
-    document.body.appendChild(dot);
-  }
-</script>
+  <script>
+    for (let i=0; i<12; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 4 + Math.random() * 8;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 96 + 'vw';
+      p.style.top = Math.random() * 96 + 'vh';
+      p.style.background = `rgba(${91+Math.random()*30}, ${106+Math.random()*20}, 240, 0.2)`;
+      p.style.animationDelay = Math.random() * 6 + 's';
+      p.style.animationDuration = (5 + Math.random() * 6) + 's';
+      document.body.appendChild(p);
+    }
+  </script>
 
-<div class="slogan" id="slogan"></div>
-<div class="container">
-  <h2>🔬 打工人专用单位换算器</h2>
-  <label>
-    请输入一组数据（可多行、用逗号或空格分隔）：<br>
-  </label>
-  <div class="input-row">
-    <textarea
-      id="batchInput"
-      placeholder="如：1.5, 1000&#10;或者每行一个数&#10;如：2.24&#10;17.3"
-      oninput="convert()"
-    ></textarea>
-    
-    <!-- 🔘 圆形单位切换按钮 -->
-    <button class="unit-toggle" id="unitToggle" title="切换单位" onclick="toggleUnitMenu()">μm</button>    
-    <!-- 📋 单位选择菜单 -->
-    <div class="unit-menu" id="unitMenu">
-      <div class="unit-item active" data-value="mm" onclick="selectUnit('mm')">毫米 (mm)</div>
-      <div class="unit-item" data-value="um" onclick="selectUnit('um')">微米 (μm)</div>
-      <div class="unit-item" data-value="mil" onclick="selectUnit('mil')">密尔 (mil)</div>
-      <div class="unit-item" data-value="in" onclick="selectUnit('in')">英寸 (in)</div>
-      <div class="unit-item" data-value="uin" onclick="selectUnit('uin')">微英寸 (u")</div>
+  <div class="slogan" id="sloganBar" title="点我换一句">
+    <span class="emoji">💼</span> <span id="sloganText"></span>
+  </div>
+
+  <div class="container">
+    <div class="title">
+      <span>🔬</span> 打工人单位换算器 <span>📐</span>
+    </div>
+
+    <div class="input-group">
+      <textarea id="batchInput" placeholder="输入数据，多行、逗号或空格分隔&#10;例如：1.5, 1000&#10;2.54&#10;39.37" oninput="convert()"></textarea>
+      <div class="action-btns">
+        <button class="action-btn clear-btn" onclick="clearAll()">🗑️ 清空</button>
+        <button class="action-btn copy-btn" onclick="copyResults()">📋 复制</button>
+      </div>
+    </div>
+
+    <div class="unit-picker">
+      <span class="unit-label">📏 输入单位：</span>
+      <div class="unit-selector" id="unitSelector">
+        <button class="unit-chip" data-unit="mm">mm</button>
+        <button class="unit-chip active" data-unit="um">μm</button>
+        <button class="unit-chip" data-unit="mil">mil</button>
+        <button class="unit-chip" data-unit="in">inch</button>
+        <button class="unit-chip" data-unit="uin">u″</button>
+      </div>
+    </div>
+
+    <div class="hint" id="hintBox">
+      💡 1 μm = <strong>0.001</strong> mm  |  1 μm = <strong>0.039</strong> mil
+    </div>
+
+    <div class="counter">
+      📊 有效数值 <span class="badge" id="countBadge">0</span>
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>原始输入</th>
+            <th>微米 (μm)</th>
+            <th>密尔 (mil)</th>
+            <th>英寸 (inch)</th>
+          </tr>
+        </thead>
+        <tbody id="resultBody">
+          <tr class="empty-row"><td colspan="4">✨ 输入数据后自动换算</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  
-  <table id="resultTable">
-    <thead>
-      <tr>
-        <th>原始输入</th>
-        <th>毫米 (mm)</th>
-        <th>微米 (μm)</th>
-        <th>密尔 (mil)</th>
-        <th>英寸 (in)</th>
-        <th>微英寸 (u")</th>
-      </tr>
-    </thead>
-    <tbody id="result"></tbody>
-  </table>
-</div>
 
-<script>
-// 标语库
-const slogans = [
-  "打工人，打工魂，打工都是人上人！",
-  "钱包瘦了，梦想可不能瘦！",
-  "搬砖路上，段子为伴~",
-  "腰酸背痛程序员，梦里工资乘以ten。",
-  "工作是暂时的，头秃是永久的。",
-  "上班一时爽，一直上班一直爽。",
-  "加班使我快乐？我没说过！",
-  "世另我：上班像上坟，下班似还魂。",
-  "挣钱难，摸鱼难，被发现更难！",
-  "卷生卷死，摸鱼偷闲。",
-  "钱没挣到，群里表情包倒是有一套。",
-  "人生苦短，多喝热水不如多摸鱼。",
-  "工资就像大姨妈，一个月来一次，几天就没了。",
-  "梦想很丰满，工资很骨感。",
-  "生活不止眼前的KPI，还有远方的年终奖。"
-];
-document.getElementById('slogan').textContent = slogans[Math.floor(Math.random() * slogans.length)];
+  <div class="toast" id="toast"></div>
 
-// 单位配置
-const unitConfig = {
-  mm:  { label: 'mm',  toMM: v => v,           factor: { um: 1000, mil: 39.370078740157, in: 0.039370078740157, uin: 39370.078740157 } },  um:  { label: 'μm',  toMM: v => v/1000,      factor: { mm: 0.001, mil: 0.039370078740157, in: 0.00003937007874, uin: 39.370078740157 } },
-  mil: { label: 'mil', toMM: v => v/39.370078740157, factor: { mm: 0.0254, um: 25.4, in: 0.001, uin: 1000 } },
-  in:  { label: 'in',  toMM: v => v/0.039370078740157, factor: { mm: 25.4, um: 25400, mil: 1000, uin: 1e6 } },
-  uin: { label: 'u"',  toMM: v => v/39370.078740157, factor: { mm: 0.0000254, um: 0.0254, mil: 0.001, in: 1e-6 } }
-};
-
-let currentUnit = 'um'; // 默认单位
-
-// 切换单位菜单显示/隐藏
-function toggleUnitMenu() {
-  const menu = document.getElementById('unitMenu');
-  const btn = document.getElementById('unitToggle');
-  const isOpen = menu.classList.contains('show');
-  
-  // 先关闭所有菜单
-  document.querySelectorAll('.unit-menu').forEach(m => m.classList.remove('show'));
-  document.querySelectorAll('.unit-toggle').forEach(b => b.classList.remove('active'));
-  
-  if (!isOpen) {
-    menu.classList.add('show');
-    btn.classList.add('active');
-  }
-}
-
-// 选择单位
-function selectUnit(unit) {
-  currentUnit = unit;
-  document.getElementById('unitToggle').textContent = unitConfig[unit].label;
-  
-  // 更新菜单激活状态
-  document.querySelectorAll('.unit-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.value === unit);
-  });
-  
-  // 关闭菜单
-  document.getElementById('unitMenu').classList.remove('show');
-  document.getElementById('unitToggle').classList.remove('active');
-  
-  // 重新计算
-  convert();
-}
-
-// 点击外部关闭菜单
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.input-row')) {
-    document.getElementById('unitMenu').classList.remove('show');
-    document.getElementById('unitToggle').classList.remove('active');
-  }
-});
-// 格式化数字
-function fmt(n) {
-  let s = (+n).toFixed(6).replace(/\.?0+$/, "");
-  return s.length > 14 ? (+n).toExponential(6) : s;
-}
-
-// 核心换算逻辑
-function convert() {
-  const input = document.getElementById('batchInput').value;
-  const nums = [];
-  
-  input.split(/[\n;]/).forEach(line => {
-    line.split(/[\s,，]+/).forEach(cell => {
-      if(cell.trim().length) nums.push(cell.trim());
+  <script>
+    const slogans = [
+      "打工人，打工魂，打工都是人上人！",
+      "钱包瘦了，梦想可不能瘦！",
+      "搬砖路上，段子为伴~",
+      "腰酸背痛程序员，梦里工资乘以ten。",
+      "上班一时爽，一直上班一直爽。",
+      "加班使我快乐？我没说过！",
+      "卷生卷死，摸鱼偷闲。",
+      "生活不止眼前的KPI，还有远方的年终奖。",
+      "摸鱼是门艺术，我在修炼中。"
+    ];
+    const sloganText = document.getElementById('sloganText');
+    sloganText.textContent = slogans[Math.floor(Math.random() * slogans.length)];
+    document.getElementById('sloganBar').addEventListener('click', () => {
+      sloganText.textContent = slogans[Math.floor(Math.random() * slogans.length)];
     });
-  });
-  
-  let html = "";
-  if(nums.length === 0) {
-    html = `<tr><td colspan="6" style="color:#94a3b8">✨ 请输入要换算的数据</td></tr>`;
-  } else {
-    const config = unitConfig[currentUnit];
-    for(const n of nums) {
-      let val = parseFloat(n);
-      if(isNaN(val)) {
-        html += `<tr><td style="color:#f87171;font-style:italic;">${n}</td>
-                  <td colspan="5" style="color:#fca5a5;">⚠️ 无效数字</td></tr>`;
-        continue;
-      }
-      let mmValue = config.toMM(val);
-      html += `<tr>
-        <td style="color: #818cf8;"><strong>${fmt(val)}</strong> ${unitConfig[currentUnit].label}</td>
-        <td style="color:#a5b4fc">${fmt(mmValue)}</td>
-        <td style="color:#a5b4fc">${fmt(mmValue * 1000)}</td>
-        <td style="color:#a5b4fc">${fmt(mmValue * 39.370078740157)}</td>
-        <td style="color:#a5b4fc">${fmt(mmValue * 0.039370078740157)}</td>
-        <td style="color:#a5b4fc">${fmt(mmValue * 39370.078740157)}</td>
-      </tr>`;
-    }
-  }
-  document.getElementById('result').innerHTML = html;
-}
 
-// 初始化
-convert();
-</script>
+    // 单位换算 (统一转为毫米)
+    const unitToMM = {
+      mm:  (v) => v,
+      um:  (v) => v / 1000,
+      mil: (v) => v / 39.370078740157,
+      in:  (v) => v / 0.039370078740157,
+      uin: (v) => v / 39370.078740157,
+    };
+    const unitNames = {
+      mm: 'mm', um: 'μm', mil: 'mil', in: 'inch', uin: 'u″'
+    };
+
+    let currentUnit = 'um';
+
+    document.getElementById('unitSelector').addEventListener('click', (e) => {
+      if (e.target.classList.contains('unit-chip')) {
+        const unit = e.target.dataset.unit;
+        if (unit && unit !== currentUnit) {
+          document.querySelectorAll('.unit-chip').forEach(chip => chip.classList.remove('active'));
+          e.target.classList.add('active');
+          currentUnit = unit;
+          updateHint();
+          convert();
+        }
+      }
+    });
+
+    function updateHint() {
+      const hintBox = document.getElementById('hintBox');
+      if (currentUnit === 'um') {
+        hintBox.innerHTML = '💡 1 μm = <strong>0.001</strong> mm  |  1 μm = <strong>0.039</strong> mil';
+      } else if (currentUnit === 'mil') {
+        hintBox.innerHTML = '💡 1 mil = <strong>25.4</strong> μm  |  1 mil = <strong>0.001</strong> inch';
+      } else if (currentUnit === 'mm') {
+        hintBox.innerHTML = '💡 1 mm = <strong>1000</strong> μm  |  1 mm = <strong>39.37</strong> mil';
+      } else if (currentUnit === 'in') {
+        hintBox.innerHTML = '💡 1 inch = <strong>25400</strong> μm  |  1 inch = <strong>1000</strong> mil';
+      } else if (currentUnit === 'uin') {
+        hintBox.innerHTML = '💡 1 u″ = <strong>0.0254</strong> μm  |  1 u″ = <strong>0.001</strong> mil';
+      }
+    }
+
+    function fmt(n) {
+      if (!isFinite(n)) return '—';
+      if (Math.abs(n) < 1e-9 && n !== 0) return (+n).toExponential(4);
+      let s = (+n).toFixed(6);
+      s = s.replace(/\.?0+$/, '');
+      if (s.length > 14) return (+n).toExponential(4);
+      return s;
+    }
+
+    function convert() {
+      const raw = document.getElementById('batchInput').value;
+      const nums = [];
+      raw.split(/[\n;]/).forEach(line => {
+        line.split(/[\s,，]+/).forEach(cell => {
+          const t = cell.trim();
+          if (t.length) nums.push(t);
+        });
+      });
+
+      const validNums = nums.filter(n => !isNaN(parseFloat(n)));
+      document.getElementById('countBadge').textContent = validNums.length;
+
+      const tbody = document.getElementById('resultBody');
+      if (nums.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="4">✨ 输入数据后自动换算</td></tr>';
+        return;
+      }
+
+      let html = '';
+      const toMM = unitToMM[currentUnit];
+      const unitLabel = unitNames[currentUnit];
+
+      for (const n of nums) {
+        const val = parseFloat(n);
+        if (isNaN(val)) {
+          html += `<tr>
+            <td style="color:#ef4444;">${escapeHtml(n)}</td>
+            <td colspan="3" style="color:#f87171;">⚠️ 无效数字</td>
+          </tr>`;
+          continue;
+        }
+        const mm = toMM(val);
+        const um = mm * 1000;
+        const mil = mm * 39.370078740157;
+        const inch = mm * 0.039370078740157;
+
+        html += `<tr onclick="copyRow(this)" title="点击复制原始值">
+          <td><strong>${fmt(val)} ${unitLabel}</strong></td>
+          <td>${fmt(um)}</td>
+          <td>${fmt(mil)}</td>
+          <td>${fmt(inch)}</td>
+        </tr>`;
+      }
+      tbody.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function copyRow(tr) {
+      const firstCell = tr.querySelector('td:first-child');
+      if (!firstCell) return;
+      const text = firstCell.textContent.trim();
+      copyToClipboard(text, '已复制：' + text);
+    }
+
+    function copyResults() {
+      const rows = document.querySelectorAll('#resultBody tr:not(.empty-row)');
+      if (rows.length === 0) {
+        showToast('⚠️ 没有数据');
+        return;
+      }
+      let allText = '原始输入\t微米(μm)\t密尔(mil)\t英寸(inch)\n';
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 4 && !cells[1].textContent.includes('无效')) {
+          const rowData = Array.from(cells).map(c => c.textContent.trim()).join('\t');
+          allText += rowData + '\n';
+        }
+      });
+      copyToClipboard(allText.trim(), '✅ 已复制全部结果');
+    }
+
+    function copyToClipboard(text, msg) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+      } else {
+        fallbackCopy(text, msg);
+      }
+    }
+    function fallbackCopy(text, msg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast(msg); } catch(e) { showToast('❌ 复制失败'); }
+      document.body.removeChild(ta);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function clearAll() {
+      document.getElementById('batchInput').value = '';
+      convert();
+      showToast('🧹 已清空');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        copyResults();
+      }
+      if (e.key === 'Escape' && document.activeElement === document.getElementById('batchInput')) {
+        clearAll();
+      }
+    });
+
+    updateHint();
+    convert();
+  </script>
 </body>
 </html>
