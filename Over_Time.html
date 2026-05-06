@@ -35,7 +35,6 @@
             color: #24284f;
             position: relative;
         }
-        /* 胶囊状立体标题 */
         header {
             background: var(--header-gradient);
             color: #fff;
@@ -47,10 +46,7 @@
             top: 12px;
             z-index: 10;
             border-radius: 60px;
-            box-shadow:
-                0 10px 28px rgba(86,104,221,0.35),
-                0 4px 12px rgba(0,0,0,0.08),
-                inset 0 2px 6px rgba(255,255,255,0.35);
+            box-shadow: 0 10px 28px rgba(86,104,221,0.35), 0 4px 12px rgba(0,0,0,0.08), inset 0 2px 6px rgba(255,255,255,0.35);
             letter-spacing: .10em;
             margin: 10px 16px 18px 16px;
             user-select: none;
@@ -348,40 +344,42 @@
             background: #fff;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 14px 10px 8px 10px;
+            padding: 14px 10px 12px 10px;
             margin-bottom: 18px;
             text-align: center;
         }
         .chart-title {
             font-size: 1em;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-weight: 600;
         }
-        canvas#year-chart {
+        canvas#weekly-chart {
             display: block;
             margin: 0 auto;
-            max-width: 220px;
-            max-height: 220px;
+            max-width: 100%;
             width: 100%;
             height: auto;
+            background: #fefefe;
+            border-radius: 12px;
         }
-        .chart-legend {
-            display: flex;
-            justify-content: center;
-            gap: 18px;
+        .weekly-stats {
+            margin-top: 12px;
+            font-size: 0.94em;
+            background: #f0f4fe;
+            border-radius: 32px;
+            padding: 8px 12px;
+            color: #3b4570;
+        }
+        .weekly-comment {
+            font-weight: 600;
+            background: #fff0db;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 40px;
             margin-top: 10px;
+            color: #b45f1b;
             font-size: 0.9em;
-            flex-wrap: wrap;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
         }
         .input-group {
             display: flex;
@@ -489,7 +487,7 @@
             .modal { padding: 20px 6vw; }
             .period-nav { gap: 6px; }
             .period-nav button { padding: 5px 10px; font-size: 0.82em; }
-            canvas#year-chart { max-width: 180px; max-height: 180px; }
+            canvas#weekly-chart { min-height: 200px; }
         }
     </style>
 </head>
@@ -509,11 +507,17 @@
         </div>
         <section class="calendar" id="calendar"></section>
         <section class="summary" id="summary"></section>
+        
+        <!-- 柱状图卡片：每周加班时长 -->
         <div class="chart-container" id="chart-container">
-            <div class="chart-title">📊 年度加班构成</div>
-            <canvas id="year-chart" width="220" height="220"></canvas>
-            <div class="chart-legend" id="chart-legend"></div>
+            <div class="chart-title">📊 每周加班时长（当前考勤周期）</div>
+            <canvas id="weekly-chart" width="500" height="240" style="width:100%; height:auto; max-width:500px; aspect-ratio:500/240"></canvas>
+            <div class="weekly-stats" id="weekly-stats">
+                <span id="weekly-compare-text">加载中...</span>
+                <div class="weekly-comment" id="weekly-humor"></div>
+            </div>
         </div>
+
         <form class="input-group" id="wage-form" autocomplete="off">
             <label for="hourly-wage">时薪(元):</label>
             <input type="number" min="1" step="1" id="hourly-wage" required>
@@ -604,7 +608,6 @@
         function saveCustomHolidaysSet(set) { localStorage.setItem(CUSTOM_HOLIDAYS_KEY, JSON.stringify([...set])); }
         let customHolidays = getCustomHolidaysSet();
 
-        // ========= 节假日临近判断 =========
         function isNearHoliday(date) {
             if (isWeekend(date) || isPublicHoliday(date)) return false;
             const oneDay = 86400000;
@@ -615,13 +618,12 @@
             return false;
         }
 
-        // ========= 标题连击 =========
+        // ========= 标题连击彩蛋 =========
         let holidayMarkEnabled = false, dataToolsVisible = false;
         const header = document.getElementById('main-header');
         let clickCount = 0, lastClickTime = 0;
         let secondClickCount = 0, secondLastClickTime = 0;
         const FIRST_NEEDED = 7, SECOND_NEEDED = 5, CLICK_WINDOW = 2500;
-
         header.addEventListener('pointerdown', function(e) {
             if (e.target.closest('#main-header') !== header) return;
             const now = Date.now();
@@ -650,8 +652,6 @@
                 }
             }
         });
-        header.addEventListener('click', e => { if (holidayMarkEnabled || dataToolsVisible) e.preventDefault(); });
-
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -659,12 +659,11 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ========= 齿轮菜单 =========
+        // ========= 齿轮备份恢复 =========
         const gear = document.getElementById('secret-gear'), menu = document.getElementById('secret-menu'), fileInput = document.getElementById('secret-file-input');
         gear.addEventListener('click', e => { e.stopPropagation(); menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex'; });
         document.addEventListener('click', () => { menu.style.display = 'none'; });
         menu.addEventListener('click', e => e.stopPropagation());
-
         document.getElementById('backup-btn').addEventListener('click', () => {
             const data = { overtime: loadData(), customHolidays: [...getCustomHolidaysSet()], wage: getWage() };
             const json = JSON.stringify(data, null, 2);
@@ -696,7 +695,7 @@
             fileInput.value = '';
         });
 
-        // ========= 周期切换 =========
+        // 周期切换逻辑
         let displayPeriod = getCurrentPeriod();
         function goToPeriod(startDate) {
             const endDate = new Date(startDate);
@@ -718,26 +717,13 @@
         document.getElementById('next-period-btn').addEventListener('click', () => goToPeriod(getNextPeriodStart(displayPeriod.start)));
         document.getElementById('today-period-btn').addEventListener('click', () => { displayPeriod = getCurrentPeriod(); render(); });
 
-        // ========= 长按标记假日 =========
+        // 长按假日逻辑 (保留)
         let longPressTimer = null, longPressStartPos = { x:0, y:0 };
         const LONG_PRESS_DURATION = 600, MOVE_THRESHOLD = 10;
         let preventNextClickUntil = 0;
 
-        function attachLongPressEvents() {
-            const cal = document.getElementById('calendar');
-            if (!cal) return;
-            cal.removeEventListener('pointerdown', onPointerDown);
-            cal.removeEventListener('pointerup', onPointerUp);
-            cal.removeEventListener('pointermove', onPointerMove);
-            cal.removeEventListener('pointercancel', cancelLongPress);
-            if (holidayMarkEnabled) {
-                cal.addEventListener('pointerdown', onPointerDown);
-                cal.addEventListener('pointerup', onPointerUp);
-                cal.addEventListener('pointermove', onPointerMove);
-                cal.addEventListener('pointercancel', cancelLongPress);
-            }
-        }
         function onPointerDown(e) {
+            if (!holidayMarkEnabled) return;
             const cell = e.target.closest('.calendar-cell');
             if (!cell || cell.classList.contains('cell-blank')) return;
             const dateKey = cell.dataset.datekey;
@@ -746,49 +732,171 @@
             if (!isNearHoliday(date) && !customHolidays.has(dateKey)) return;
             if (isPublicHoliday(date) || isWeekend(date)) return;
             longPressStartPos = { x: e.clientX, y: e.clientY };
-            longPressTimer = setTimeout(() => { handleLongPress(dateKey); longPressTimer = null; }, LONG_PRESS_DURATION);
+            longPressTimer = setTimeout(() => {
+                if (customHolidays.has(dateKey)) {
+                    if (confirm('取消将该日计为假日（恢复普通工作日）？')) {
+                        customHolidays.delete(dateKey);
+                        saveCustomHolidaysSet(customHolidays);
+                        render(); showToast('已恢复为工作日');
+                    }
+                } else {
+                    if (confirm('将该日计为假日（2倍工资）？')) {
+                        customHolidays.add(dateKey);
+                        saveCustomHolidaysSet(customHolidays);
+                        render(); showToast('已设为假日（2倍）');
+                    }
+                }
+                longPressTimer = null;
+            }, LONG_PRESS_DURATION);
         }
         function onPointerUp() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } }
-        function onPointerMove(e) {
-            if (!longPressTimer) return;
-            if (Math.abs(e.clientX - longPressStartPos.x) > MOVE_THRESHOLD || Math.abs(e.clientY - longPressStartPos.y) > MOVE_THRESHOLD) {
-                clearTimeout(longPressTimer); longPressTimer = null;
-            }
-        }
+        function onPointerMove(e) { if (longPressTimer && (Math.abs(e.clientX - longPressStartPos.x) > MOVE_THRESHOLD || Math.abs(e.clientY - longPressStartPos.y) > MOVE_THRESHOLD)) { clearTimeout(longPressTimer); longPressTimer = null; } }
         function cancelLongPress() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } }
-        function handleLongPress(dateKey) {
-            preventNextClickUntil = Date.now() + 500;
-            if (customHolidays.has(dateKey)) {
-                if (confirm('取消将该日计为假日（恢复普通工作日）？')) {
-                    customHolidays.delete(dateKey);
-                    saveCustomHolidaysSet(customHolidays);
-                    render(); showToast('已恢复为工作日');
+
+        // ========= 核心：每周加班时长柱状图（修正同比逻辑，基于已结束周）=========
+        function computeWeeklyHours(startDate, endDate) {
+            const days = getDaysArray(startDate, endDate);
+            const overtimeMap = loadData();
+            const weeksMap = new Map(); // key: 周一日期字符串 -> { label, hours, start, end }
+            for (let d of days) {
+                const dayOfWeek = d.getDay(); // 0周日
+                const monday = new Date(d);
+                const diff = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+                monday.setDate(d.getDate() + diff);
+                const weekKey = formatDateKey(monday);
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+                if (!weeksMap.has(weekKey)) {
+                    weeksMap.set(weekKey, { 
+                        label: `${monday.getMonth()+1}/${monday.getDate()}~${sunday.getMonth()+1}/${sunday.getDate()}`,
+                        hours: 0, start: new Date(monday), end: new Date(sunday)
+                    });
+                }
+                const key = formatDateKey(d);
+                const val = parseFloat(overtimeMap[key]?.h) || 0;
+                weeksMap.get(weekKey).hours += val;
+            }
+            const weeks = Array.from(weeksMap.values());
+            weeks.sort((a,b) => a.start - b.start);
+            return weeks;
+        }
+
+        function getHumorousComment(changePercent) {
+            if (isNaN(changePercent)) return "✨ 摸鱼躺平，岁月静好 ✨";
+            if (changePercent > 30) return "🔥 爆肝预警！下周请多喝枸杞 🔥";
+            if (changePercent > 10) return "⚠️ 奋斗逼上线，注意身体 ⚠️";
+            if (changePercent > 0) return "📈 稳中带卷，建议周末晒个太阳 🌞";
+            if (changePercent === 0) return "🐢 加班量和上周一模一样，稳如老狗 🐢";
+            if (changePercent < -30) return "🎉 功德圆满！下周可以合理摸鱼啦 🎉";
+            if (changePercent < -10) return "🍃 效率飞升，加班锐减，赞！ 🍃";
+            return "🍵 劳逸结合，打工人的自我修养 🍵";
+        }
+
+        function drawWeeklyChart() {
+            const canvas = document.getElementById('weekly-chart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const weeksData = computeWeeklyHours(displayPeriod.start, displayPeriod.end);
+            
+            // 获取今天（清除时间部分，便于比较日期）
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // 筛选出已经结束的周（周日 <= 今天）
+            const historyWeeks = weeksData.filter(w => w.end <= today);
+            // 最近的已结束周（历史中最后一周）及其前一周
+            let recentWeek = null;
+            let prevWeek = null;
+            if (historyWeeks.length >= 1) {
+                recentWeek = historyWeeks[historyWeeks.length - 1];
+                if (historyWeeks.length >= 2) {
+                    prevWeek = historyWeeks[historyWeeks.length - 2];
+                }
+            }
+            
+            // 绘制柱状图（显示所有周，含未来周）
+            if (!weeksData.length) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '13px sans-serif';
+                ctx.fillStyle = '#9aa3c0';
+                ctx.textAlign = 'center';
+                ctx.fillText('📭 当前周期暂无加班记录', canvas.width/2, canvas.height/2);
+                document.getElementById('weekly-compare-text').innerHTML = '暂无周数据';
+                document.getElementById('weekly-humor').innerHTML = '🥱 加班为0，快乐加倍';
+                return;
+            }
+            
+            const maxHours = Math.max(...weeksData.map(w => w.hours), 0.1);
+            const barWidth = (canvas.width - 70) / weeksData.length * 0.7;
+            const startX = 45;
+            const baseY = canvas.height - 35;
+            const maxHeight = canvas.height - 60;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = '#b8c4e6';
+            ctx.lineWidth = 1;
+            ctx.moveTo(30, 10);
+            ctx.lineTo(30, baseY);
+            ctx.lineTo(canvas.width-15, baseY);
+            ctx.stroke();
+            for (let i=0; i<weeksData.length; i++) {
+                const w = weeksData[i];
+                const h = w.hours;
+                const barHeight = (h / maxHours) * maxHeight;
+                const x = startX + i * (barWidth + 12);
+                const y = baseY - barHeight;
+                ctx.fillStyle = '#5866ef';
+                ctx.fillRect(x, y, barWidth, barHeight);
+                ctx.fillStyle = '#2d3c9e';
+                ctx.font = '10px "Segoe UI"';
+                ctx.textAlign = 'center';
+                ctx.fillText(w.label, x + barWidth/2, baseY + 12);
+                ctx.fillStyle = '#4d60ad';
+                ctx.fillText(h.toFixed(1)+'h', x + barWidth/2, y-3);
+            }
+            
+            // 同比分析（仅基于已结束周，避免未来周干扰）
+            let compareHtml = '';
+            let humorTxt = '';
+            if (recentWeek) {
+                if (prevWeek) {
+                    const diff = recentWeek.hours - prevWeek.hours;
+                    let percent = 0;
+                    if (prevWeek.hours > 0) percent = (diff / prevWeek.hours) * 100;
+                    else if (recentWeek.hours > 0) percent = 100;
+                    const symbol = diff > 0 ? '📈 +' : (diff < 0 ? '📉 ' : '➖ ');
+                    const absPercent = Math.abs(percent).toFixed(1);
+                    compareHtml = `📅 最近已结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h，相比前一周（${prevWeek.label}） ${symbol}${diff !==0 ? Math.abs(diff).toFixed(1)+'h' : '持平'} ${diff !==0 ? `(${symbol}${absPercent}%)` : ''}`;
+                    humorTxt = getHumorousComment(percent);
+                } else {
+                    compareHtml = `📅 最近已结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h（无更早周可比）`;
+                    humorTxt = recentWeek.hours > 0 ? "💪 开启加班征程，注意稳住节奏 💪" : "🌱 本周劳逸结合，下周继续保持 🌱";
                 }
             } else {
-                if (confirm('将该日计为假日（2倍工资）？')) {
-                    customHolidays.add(dateKey);
-                    saveCustomHolidaysSet(customHolidays);
-                    render(); showToast('已设为假日（2倍）');
-                }
+                compareHtml = "📭 当前周期暂无已结束的完整周数据（未来周不纳入同比）";
+                humorTxt = "🔮 未来战士，加班尚未发生 🔮";
             }
+            document.getElementById('weekly-compare-text').innerHTML = compareHtml;
+            document.getElementById('weekly-humor').innerHTML = humorTxt;
         }
 
-        // ========= 渲染 =========
-        function render() {
-            customHolidays = getCustomHolidaysSet();
-            const now = new Date();
-            const p = displayPeriod;
-            document.getElementById('period-label').textContent =
-                `考勤周期：${p.start.getFullYear()}/${p.start.getMonth()+1}/${p.start.getDate()} - ${p.end.getFullYear()}/${p.end.getMonth()+1}/${p.end.getDate()}`;
-            const total = Math.round((p.end - p.start) / 86400000) + 1;
-            const cur = Math.min(total, Math.max(0, Math.round((now - p.start) / 86400000) + 1));
-            document.getElementById('progress-inner').style.width = `${(cur/total)*100}%`;
-
-            renderCalendar(p.start, p.end, now);
-            updateSummary(p.start, p.end);
-            drawYearChart();
-            showWageInput();
-            attachLongPressEvents();
+        function updateSummary(start, end) {
+            const data = loadData(), wage = getWage();
+            let tempH=0, tempFee=0, holiH=0, holiFee=0, pubH=0, pubFee=0;
+            getDaysArray(start, end).forEach(d => {
+                const key = formatDateKey(d), val = parseFloat(data[key]?.h) || 0;
+                if (!val) return;
+                if (isPublicHoliday(d)) { pubH += val; pubFee += val*wage*3; }
+                else if (isWeekend(d) || customHolidays.has(key)) { holiH += val; holiFee += val*wage*2; }
+                else { tempH += val; tempFee += val*wage*1.5; }
+            });
+            const totalFee = tempFee + holiFee + pubFee;
+            document.getElementById('summary').innerHTML = `
+                工作日加班（1.5倍）合计：<strong>${tempH.toFixed(1)}</strong> 小时<br>
+                假日加班（2倍）合计：<strong>${holiH.toFixed(1)}</strong> 小时<br>
+                <span class="pub-row">🏛 国定假日加班（3倍）合计：<strong>${pubH.toFixed(1)}</strong> 小时</span><br>
+                <span class="total-row">加班工资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
+            `;
         }
 
         function renderCalendar(start, end, today) {
@@ -815,12 +923,9 @@
                         bar = `<div class="cell-ot-bar-bg"><div class="cell-ot-bar ${cls}" style="width:${Math.min(frac*100,100)}%"></div></div>`;
                         valShow = `<div class="cell-ot-num">${h}h</div>`;
                     }
-                    const attrs = [
-                        isWk && !isPub ? 'data-weekend="1"' : '',
-                        isPub ? 'data-pubholiday="1"' : '',
-                    ].filter(Boolean).join(' ');
+                    const attrs = [isWk && !isPub ? 'data-weekend="1"' : '', isPub ? 'data-pubholiday="1"' : ''].filter(Boolean).join(' ');
                     const cls = `${isToday?' today':''}${isCustom?' custom-holiday':''}`;
-                    row.push(`<div class="calendar-cell${cls}" tabindex="0" data-datekey="${key}" ${attrs} onclick="onCellClick('${key}')" onkeydown="if(event.key==='Enter'){onCellClick('${key}')}"><div class="cell-date">${d.getDate()}</div>${bar}${valShow}</div>`);
+                    row.push(`<div class="calendar-cell${cls}" tabindex="0" data-datekey="${key}" ${attrs} onclick="onCellClick('${key}')"><div class="cell-date">${d.getDate()}</div>${bar}${valShow}</div>`);
                 }
                 if ((i+1)%7 === 0 || i === cells.length-1) {
                     html.push(`<div class="calendar-row">${row.join('')}</div>`);
@@ -830,123 +935,49 @@
             document.getElementById('calendar').innerHTML = html.join('');
         }
 
-        function updateSummary(start, end) {
-            const data = loadData(), wage = getWage();
-            let tempH=0, tempFee=0, holiH=0, holiFee=0, pubH=0, pubFee=0;
-            getDaysArray(start, end).forEach(d => {
-                const key = formatDateKey(d), val = parseFloat(data[key]?.h) || 0;
-                if (!val) return;
-                if (isPublicHoliday(d)) { pubH += val; pubFee += val*wage*3; }
-                else if (isWeekend(d) || customHolidays.has(key)) { holiH += val; holiFee += val*wage*2; }
-                else { tempH += val; tempFee += val*wage*1.5; }
-            });
-            const totalFee = tempFee + holiFee + pubFee;
-            document.getElementById('summary').innerHTML = `
-                工作日加班（1.5倍）合计：<strong>${tempH.toFixed(1)}</strong> 小时<br>
-                假日加班（2倍）合计：<strong>${holiH.toFixed(1)}</strong> 小时<br>
-                <span class="pub-row">🏛 国定假日加班（3倍）合计：<strong>${pubH.toFixed(1)}</strong> 小时</span><br>
-                <span class="total-row">加班工资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
-            `;
-        }
-
         function showWageInput() {
             const form = document.getElementById('wage-form'), input = document.getElementById('hourly-wage');
             if (input) input.value = getWage();
-            form.style.display = 'flex';
             form.onsubmit = e => {
                 e.preventDefault();
                 const v = parseInt(input.value.trim()) || 30;
                 setWage(v);
-                form.style.display = 'none';
                 render();
-                setTimeout(() => form.style.display = 'flex', 2000);
                 return false;
             };
         }
 
-        // ========= 年度饼图 =========
-        function drawYearChart() {
-            const canvas = document.getElementById('year-chart');
-            const legendDiv = document.getElementById('chart-legend');
-            if (!canvas || !legendDiv) return;
-            const ctx = canvas.getContext('2d');
-            const year = new Date().getFullYear();
-            const data = loadData();
-            let workH = 0, holidayH = 0, pubH = 0;
-
-            // 遍历全年
-            const start = new Date(year, 0, 1);
-            const end = new Date(year, 11, 31);
-            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                const key = formatDateKey(d);
-                const val = parseFloat(data[key]?.h) || 0;
-                if (!val) continue;
-                if (isPublicHoliday(d)) pubH += val;
-                else if (isWeekend(d) || customHolidays.has(key)) holidayH += val;
-                else workH += val;
-            }
-
-            const total = workH + holidayH + pubH;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (total === 0) {
-                ctx.font = '14px "PingFang SC", "Segoe UI", sans-serif';
-                ctx.fillStyle = '#a0a5c0';
-                ctx.textAlign = 'center';
-                ctx.fillText('暂无年度数据', canvas.width/2, canvas.height/2);
-                legendDiv.innerHTML = '';
-                return;
-            }
-
-            const segments = [
-                { label: '工作日 1.5倍', value: workH, color: '#5668dd' },
-                { label: '假日 2倍', value: holidayH, color: '#9a49fa' },
-                { label: '国定 3倍', value: pubH, color: '#f0803c' }
-            ].filter(s => s.value > 0);
-
-            let startAngle = -Math.PI / 2;
-            const centerX = canvas.width / 2, centerY = canvas.height / 2;
-            const radius = Math.min(centerX, centerY) - 6;
-
-            segments.forEach(seg => {
-                const sliceAngle = (seg.value / total) * 2 * Math.PI;
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
-                ctx.closePath();
-                ctx.fillStyle = seg.color;
-                ctx.fill();
-                // 绘制百分比文字
-                const percent = ((seg.value / total) * 100).toFixed(0);
-                if (percent > 5) {
-                    const textAngle = startAngle + sliceAngle / 2;
-                    const textX = centerX + Math.cos(textAngle) * (radius * 0.7);
-                    const textY = centerY + Math.sin(textAngle) * (radius * 0.7);
-                    ctx.save();
-                    ctx.font = 'bold 11px "PingFang SC", "Segoe UI", sans-serif';
-                    ctx.fillStyle = '#fff';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(percent + '%', textX, textY);
-                    ctx.restore();
+        // ========= 全局渲染 =========
+        function render() {
+            customHolidays = getCustomHolidaysSet();
+            const now = new Date();
+            const p = displayPeriod;
+            document.getElementById('period-label').innerHTML = `考勤周期：${p.start.getFullYear()}/${p.start.getMonth()+1}/${p.start.getDate()} - ${p.end.getFullYear()}/${p.end.getMonth()+1}/${p.end.getDate()}`;
+            const total = Math.round((p.end - p.start) / 86400000) + 1;
+            const cur = Math.min(total, Math.max(0, Math.round((now - p.start) / 86400000) + 1));
+            document.getElementById('progress-inner').style.width = `${(cur/total)*100}%`;
+            renderCalendar(p.start, p.end, now);
+            updateSummary(p.start, p.end);
+            drawWeeklyChart();     // 修正后的柱状图+同比
+            showWageInput();
+            // 长按事件绑定
+            const cal = document.getElementById('calendar');
+            if (cal) {
+                cal.removeEventListener('pointerdown', onPointerDown);
+                cal.removeEventListener('pointerup', onPointerUp);
+                cal.removeEventListener('pointermove', onPointerMove);
+                cal.removeEventListener('pointercancel', cancelLongPress);
+                if (holidayMarkEnabled) {
+                    cal.addEventListener('pointerdown', onPointerDown);
+                    cal.addEventListener('pointerup', onPointerUp);
+                    cal.addEventListener('pointermove', onPointerMove);
+                    cal.addEventListener('pointercancel', cancelLongPress);
                 }
-                startAngle += sliceAngle;
-            });
-
-            // 图例
-            legendDiv.innerHTML = segments.map(s => `
-                <div class="legend-item">
-                    <span class="legend-color" style="background:${s.color}"></span>
-                    ${s.label} ${s.value.toFixed(1)}h
-                </div>
-            `).join('');
+            }
         }
 
-        // ========= 弹窗 =========
-        let modalLock = false;
         window.onCellClick = function(key) {
             if (preventNextClickUntil && Date.now() < preventNextClickUntil) { preventNextClickUntil = 0; return; }
-            if (!key || modalLock) return;
             const mask = document.getElementById('modal-mask'), input = document.getElementById('modal-input-hours'), label = document.getElementById('modal-date-label');
             const date = new Date(key + 'T00:00:00');
             const isPub = isPublicHoliday(date), isWk = isWeekend(date), isCustom = !isPub && !isWk && customHolidays.has(key);
@@ -960,24 +991,23 @@
             label.innerHTML = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${type}，上限${max}h`;
             mask.style.display = 'flex';
             input.focus(); input.select();
-            modalLock = true;
-
-            document.getElementById('modal-save-btn').onclick = () => {
+            window.modalSaveHandler = () => {
                 let v = parseFloat(input.value) || 0;
                 v = Math.min(max, Math.max(0, v));
                 if (!data[key]) data[key] = {};
                 v === 0 ? delete data[key].h : data[key].h = v;
                 saveData(data);
-                mask.style.display = 'none'; modalLock = false;
+                mask.style.display = 'none';
                 render();
             };
-            document.getElementById('modal-cancel-btn').onclick = () => { mask.style.display = 'none'; modalLock = false; };
-            input.onkeydown = e => { if (e.key==='Enter') document.getElementById('modal-save-btn').onclick(); };
-            mask.onclick = e => { if (e.target===mask) { mask.style.display='none'; modalLock=false; } };
+            document.getElementById('modal-save-btn').onclick = window.modalSaveHandler;
+            document.getElementById('modal-cancel-btn').onclick = () => { mask.style.display = 'none'; };
+            input.onkeydown = e => { if (e.key==='Enter') window.modalSaveHandler(); };
+            mask.onclick = e => { if (e.target===mask) mask.style.display='none'; };
         };
-
+        
         render();
-        window.addEventListener('resize', render);
+        window.addEventListener('resize', () => drawWeeklyChart());
     </script>
 </body>
 </html>
