@@ -895,7 +895,7 @@
                 🌙临时加班（1.5倍）：<strong>${tempH.toFixed(1)}</strong> 小时<br>
                 ☀️假日加班（2倍）：<strong>${holiH.toFixed(1)}</strong> 小时<br>
                 <span class="pub-row">🏛 国假加班（3倍）：<strong>${pubH.toFixed(1)}</strong> 小时</span><br>
-                <span class="total-row">加班薪资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
+                <span class="total-row">💰加班薪资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
             `;
         }
 
@@ -982,9 +982,9 @@
             const date = new Date(key + 'T00:00:00');
             const isPub = isPublicHoliday(date), isWk = isWeekend(date), isCustom = !isPub && !isWk && customHolidays.has(key);
             let max, type;
-            if (isPub) { max=8; type='<span class="pub-badge">🏛 国假 · 3倍</span>'; }
-            else if (isWk || isCustom) { max=8; type='（假日·2倍）'; }
-            else { max=4; type='（工作日·1.5倍）'; }
+            if (isPub) { max=8; type='<span class="pub-badge">🏛国假 · 3倍</span>'; }
+            else if (isWk || isCustom) { max=8; type='（☀️假日·2倍）'; }
+            else { max=4; type='（🌙工作日·1.5倍）'; }
             const data = loadData();
             input.value = data[key]?.h ?? '';
             input.max = max; input.min = 0;
