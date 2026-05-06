@@ -866,10 +866,10 @@
                     else if (recentWeek.hours > 0) percent = 100;
                     const symbol = diff > 0 ? '📈 +' : (diff < 0 ? '📉 ' : '➖ ');
                     const absPercent = Math.abs(percent).toFixed(1);
-                    compareHtml = `📅 最近已结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h，相比前一周（${prevWeek.label}） ${symbol}${diff !==0 ? Math.abs(diff).toFixed(1)+'h' : '持平'} ${diff !==0 ? `(${symbol}${absPercent}%)` : ''}`;
+                    compareHtml = `📅 结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h，同比前周（${prevWeek.label}） ${symbol}${diff !==0 ? Math.abs(diff).toFixed(1)+'h' : '持平'} ${diff !==0 ? `(${symbol}${absPercent}%)` : ''}`;
                     humorTxt = getHumorousComment(percent);
                 } else {
-                    compareHtml = `📅 最近已结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h（无更早周可比）`;
+                    compareHtml = `📅 结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h（无更早周可比）`;
                     humorTxt = recentWeek.hours > 0 ? "💪 开启加班征程，注意稳住节奏 💪" : "🌱 本周劳逸结合，下周继续保持 🌱";
                 }
             } else {
@@ -892,10 +892,10 @@
             });
             const totalFee = tempFee + holiFee + pubFee;
             document.getElementById('summary').innerHTML = `
-                工作日加班（1.5倍）合计：<strong>${tempH.toFixed(1)}</strong> 小时<br>
-                假日加班（2倍）合计：<strong>${holiH.toFixed(1)}</strong> 小时<br>
-                <span class="pub-row">🏛 国定假日加班（3倍）合计：<strong>${pubH.toFixed(1)}</strong> 小时</span><br>
-                <span class="total-row">加班工资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
+                🌙临时加班（1.5倍）合计：<strong>${tempH.toFixed(1)}</strong> 小时<br>
+                ☀️假日加班（2倍）合计：<strong>${holiH.toFixed(1)}</strong> 小时<br>
+                <span class="pub-row">🏛 国假加班（3倍）合计：<strong>${pubH.toFixed(1)}</strong> 小时</span><br>
+                <span class="total-row">加班薪资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
             `;
         }
 
@@ -982,7 +982,7 @@
             const date = new Date(key + 'T00:00:00');
             const isPub = isPublicHoliday(date), isWk = isWeekend(date), isCustom = !isPub && !isWk && customHolidays.has(key);
             let max, type;
-            if (isPub) { max=8; type='<span class="pub-badge">🏛 国定假日 · 3倍工资</span>'; }
+            if (isPub) { max=8; type='<span class="pub-badge">🏛 国假 · 3倍工资</span>'; }
             else if (isWk || isCustom) { max=8; type='（假日·2倍工资）'; }
             else { max=4; type='（工作日·1.5倍工资）'; }
             const data = loadData();
