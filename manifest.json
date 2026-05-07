@@ -1,6 +1,6 @@
 {
-  "name": "Yeochin6 工具集",
-  "short_name": "Yeochin工具",
+  "name": "HomePage",
+  "short_name": "HomePage",
   "description": "提供JMP_Pro、Over_Time、Unit_Trans等实用工具",
   "start_url": "/",
   "display": "standalone",
