@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>博客门户 · 打工人导航站</title>
+    <title>博客门户 · 导航站</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -970,11 +970,11 @@
                 <div class="logo-ring"></div>
             </div>
             <h1 class="site-title">🌟 Blog Portal 💫</h1>
-            <p class="site-subtitle">🧑🏻‍🔧 搬砖路上，再忙也要记录生活哟! ✨</p>
+            <p class="site-subtitle">🧑🏻‍🔧搬砖路上，再忙也要记录生活噢!✨</p>
         </header>
 
         <div class="marquee-banner">
-            <span class="marquee-label">💬 Slogans</span>
+            <span class="marquee-label">💬 Slogan</span>
             <div class="marquee-track"><div class="marquee-content" id="marqueeContent"></div></div>
         </div>
 
@@ -998,7 +998,7 @@
             </div>
             <div class="global-visits">
                 <i class="fa-solid fa-earth-americas"></i>
-                <span>总访问量</span>
+                <span>总访客</span>
                 <span class="visits-number" id="globalVisitsCount">---</span>
                 <span>次</span>
             </div>
@@ -1010,7 +1010,7 @@
         </section>
 
         <footer class="footer">
-            <p>Designed by @YeoChing <span class="heart"><i class="fa-solid fa-heart"></i></span> Working on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a></p>
+            <p>Created by @YeoChing <span class="heart"><i class="fa-solid fa-heart"></i></span> Working on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a></p>
         </footer>
     </div>
 
@@ -1033,16 +1033,16 @@
     <script>
         (function() {
             const DEFAULT_LINKS = [
-                { title: '-考勤面板', url: 'Over_Time.html', desc: '我的第一篇博客门户，记录加班时数与薪得。', icon: 'fa-solid fa-pen-to-square',
+                { title: '★考勤面板', url: 'Over_Time.html', desc: '我的第一篇博客门户，记录加班时数与薪得。', icon: 'fa-solid fa-pen-to-square',
                     tag: '考勤' },
-                { title: '-单位换算', url: 'Unit_Trans.html', desc: '一键完成多项数据的公制_英制切换，快速实用。', icon: 'fa-solid fa-laptop-code',
+                { title: '★单位换算', url: 'Unit_Trans.html', desc: '一键完成多项数据的公制_英制切换，快速实用。', icon: 'fa-solid fa-laptop-code',
                     tag: '单位' },
-                { title: '-JMP数据统计分析', url: 'JMP_Pro.html', desc: '简洁易上手的数据统计分析工具，效率倍增。', icon: 'fa-solid fa-screwdriver-wrench',
+                { title: '★JMP数据统计分析', url: 'JMP_Pro.html', desc: '简洁易上手的数据统计分析工具，效率倍增。', icon: 'fa-solid fa-screwdriver-wrench',
                     tag: 'JMP' },
-                { title: '-阅读书单', url: 'reading.html', desc: '最近在读的书和阅读笔记整理，持续更新中。', icon: 'fa-solid fa-book-open',
+                { title: '★资源工坊', url: 'Resource_Shop.html', desc: 'Android、Windows、刷机固件、实用软件等资源。', icon: 'fa-solid fa-book-open',
                 tag: '笔记' },
-                { title: '-友情链接', url: 'friends.html', desc: '朋友们的博客和推荐站点，欢迎互链。', icon: 'fa-solid fa-link', tag: '链接' },
-                { title: '-留言板', url: 'guestbook.html', desc: '欢迎留下你的足迹和想法，一起交流。', icon: 'fa-solid fa-envelope',
+                { title: '★友情链接', url: 'friends.html', desc: '朋友们的博客和推荐站点，欢迎互链。', icon: 'fa-solid fa-link', tag: '链接' },
+                { title: '★留言板', url: 'guestbook.html', desc: '欢迎留下你的足迹和想法，一起交流。', icon: 'fa-solid fa-envelope',
                 tag: '互动' }
             ];
 
@@ -1324,7 +1324,7 @@
                     if (!debugBadge) {
                         debugBadge = document.createElement('div');
                         debugBadge.className = 'debug-badge';
-                        debugBadge.innerHTML = '🔧 调试模式 (可编辑&拖拽排序卡片)';
+                        debugBadge.innerHTML = '🔧 调试模式';
                         document.body.appendChild(debugBadge);
                     } else {
                         debugBadge.style.display = 'flex';
