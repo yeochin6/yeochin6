@@ -2,10 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博客门户 - 打工人导航站</title>
-
-    <!-- Font Awesome 6 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>博客门户 · 打工人导航站</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -47,10 +45,8 @@
             overflow-x: hidden;
             position: relative;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* 背景层 (保持不变) */
         .bg-grid {
             position: fixed;
             top: 0;
@@ -60,8 +56,7 @@
             pointer-events: none;
             z-index: 0;
             opacity: 0.35;
-            background-image:
-                radial-gradient(circle, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
             background-size: 28px 28px;
             mask-image: radial-gradient(ellipse 65% 55% at 50% 35%, black 30%, transparent 70%);
             -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 35%, black 30%, transparent 70%);
@@ -75,88 +70,434 @@
             opacity: 0.14;
             animation: orbFloat 14s ease-in-out infinite;
         }
-        .bg-orb.orb-1 { width: 380px; height: 380px; background: #8b5cf6; top: -8%; left: -6%; animation-delay: 0s; animation-duration: 16s; }
-        .bg-orb.orb-2 { width: 300px; height: 300px; background: #5b8def; bottom: -10%; right: -5%; animation-delay: -5s; animation-duration: 18s; }
-        .bg-orb.orb-3 { width: 220px; height: 220px; background: #a78bfa; top: 45%; left: 55%; animation-delay: -9s; animation-duration: 13s; opacity: 0.09; }
+        .bg-orb.orb-1 {
+            width: 380px;
+            height: 380px;
+            background: #8b5cf6;
+            top: -8%;
+            left: -6%;
+            animation-delay: 0s;
+            animation-duration: 16s;
+        }
+        .bg-orb.orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #5b8def;
+            bottom: -10%;
+            right: -5%;
+            animation-delay: -5s;
+            animation-duration: 18s;
+        }
+        .bg-orb.orb-3 {
+            width: 220px;
+            height: 220px;
+            background: #a78bfa;
+            top: 45%;
+            left: 55%;
+            animation-delay: -9s;
+            animation-duration: 13s;
+            opacity: 0.09;
+        }
         @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(40px, -30px) scale(1.12); }
-            50% { transform: translate(-20px, 25px) scale(0.92); }
-            75% { transform: translate(-35px, -15px) scale(1.08); }
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(40px, -30px) scale(1.12);
+            }
+            50% {
+                transform: translate(-20px, 25px) scale(0.92);
+            }
+            75% {
+                transform: translate(-35px, -15px) scale(1.08);
+            }
         }
-        .floating-dots { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .floating-dots .dot { position: absolute; border-radius: 50%; background: var(--purple); animation: dotDrift 20s linear infinite; opacity: 0; }
-        .dot:nth-child(1) { width: 5px; height: 5px; left: 10%; top: 20%; animation-delay: 0s; animation-duration: 22s; background: #8b5cf6; }
-        .dot:nth-child(2) { width: 3px; height: 3px; left: 25%; top: 60%; animation-delay: -5s; animation-duration: 19s; background: #5b8def; }
-        .dot:nth-child(3) { width: 4px; height: 4px; left: 55%; top: 15%; animation-delay: -10s; animation-duration: 24s; background: #7c6ff7; }
-        .dot:nth-child(4) { width: 6px; height: 6px; left: 70%; top: 70%; animation-delay: -3s; animation-duration: 21s; background: #a78bfa; }
-        .dot:nth-child(5) { width: 3px; height: 3px; left: 40%; top: 35%; animation-delay: -14s; animation-duration: 26s; background: #5b8def; }
-        .dot:nth-child(6) { width: 4px; height: 4px; left: 85%; top: 40%; animation-delay: -8s; animation-duration: 18s; background: #8b5cf6; }
+        .floating-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .floating-dots .dot {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--purple);
+            animation: dotDrift 20s linear infinite;
+            opacity: 0;
+        }
+        .dot:nth-child(1) {
+            width: 5px;
+            height: 5px;
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+            animation-duration: 22s;
+            background: #8b5cf6;
+        }
+        .dot:nth-child(2) {
+            width: 3px;
+            height: 3px;
+            left: 25%;
+            top: 60%;
+            animation-delay: -5s;
+            animation-duration: 19s;
+            background: #5b8def;
+        }
+        .dot:nth-child(3) {
+            width: 4px;
+            height: 4px;
+            left: 55%;
+            top: 15%;
+            animation-delay: -10s;
+            animation-duration: 24s;
+            background: #7c6ff7;
+        }
+        .dot:nth-child(4) {
+            width: 6px;
+            height: 6px;
+            left: 70%;
+            top: 70%;
+            animation-delay: -3s;
+            animation-duration: 21s;
+            background: #a78bfa;
+        }
+        .dot:nth-child(5) {
+            width: 3px;
+            height: 3px;
+            left: 40%;
+            top: 35%;
+            animation-delay: -14s;
+            animation-duration: 26s;
+            background: #5b8def;
+        }
+        .dot:nth-child(6) {
+            width: 4px;
+            height: 4px;
+            left: 85%;
+            top: 40%;
+            animation-delay: -8s;
+            animation-duration: 18s;
+            background: #8b5cf6;
+        }
         @keyframes dotDrift {
-            0% { transform: translate(0, 0) scale(0); opacity: 0; }
-            5% { opacity: 0.8; transform: translate(15px, -30px) scale(1); }
-            15% { opacity: 1; transform: translate(50px, -80px) scale(1.4); }
-            30% { opacity: 0.5; transform: translate(120px, -50px) scale(0.7); }
-            50% { opacity: 0.15; transform: translate(80px, 30px) scale(0.3); }
-            70% { opacity: 0; transform: translate(-30px, 60px) scale(0); }
-            100% { transform: translate(0, 0) scale(0); opacity: 0; }
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.8;
+                transform: translate(15px, -30px) scale(1);
+            }
+            15% {
+                opacity: 1;
+                transform: translate(50px, -80px) scale(1.4);
+            }
+            30% {
+                opacity: 0.5;
+                transform: translate(120px, -50px) scale(0.7);
+            }
+            50% {
+                opacity: 0.15;
+                transform: translate(80px, 30px) scale(0.3);
+            }
+            70% {
+                opacity: 0;
+                transform: translate(-30px, 60px) scale(0);
+            }
+            100% {
+                transform: translate(0, 0) scale(0);
+                opacity: 0;
+            }
         }
 
-        .main-container { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 20px 24px 50px; }
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 20px 24px 50px;
+        }
 
-        /* 头部 */
-        .header { text-align: center; padding: 40px 20px 24px; position: relative; }
-        .logo-wrap { display: inline-block; position: relative; margin-bottom: 14px; }
-        .logo-emoji { font-size: 56px; display: block; animation: logoBounce 3s ease-in-out infinite; filter: drop-shadow(0 8px 20px rgba(139, 92, 246, 0.3)); cursor: default; user-select: none; }
-        @keyframes logoBounce { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-14px); } 50% { transform: translateY(0); } 70% { transform: translateY(-7px); } 85% { transform: translateY(0); } }
-        .logo-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; border-radius: 50%; border: 2px dashed rgba(139, 92, 246, 0.3); animation: ringSpin 20s linear infinite; pointer-events: none; }
-        @keyframes ringSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-        .site-title { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; line-height: 1.2; }
-        .site-subtitle { font-size: 1rem; color: var(--text-secondary); font-weight: 400; letter-spacing: 0.04em; }
+        .header {
+            text-align: center;
+            padding: 36px 20px 20px;
+            position: relative;
+        }
+        .logo-wrap {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .logo-emoji {
+            font-size: 52px;
+            display: block;
+            animation: logoBounce 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 20px rgba(139, 92, 246, 0.3));
+            user-select: none;
+            transition: transform 0.1s ease;
+        }
+        .logo-emoji:active {
+            transform: scale(0.96);
+        }
+        @keyframes logoBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-14px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            70% {
+                transform: translateY(-7px);
+            }
+            85% {
+                transform: translateY(0);
+            }
+        }
+        .logo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            animation: ringSpin 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes ringSpin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+        .site-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        .site-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
 
-        /* 滚动标语 */
-        .marquee-banner { margin: 16px 0 28px; background: var(--gradient-subtle); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: var(--radius); overflow: hidden; position: relative; height: 46px; display: flex; align-items: center; box-shadow: var(--shadow-sm); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .marquee-label { flex-shrink: 0; background: var(--gradient); color: #fff; font-weight: 700; font-size: 0.8rem; padding: 6px 16px; border-radius: 20px; margin-left: 10px; letter-spacing: 0.05em; z-index: 2; white-space: nowrap; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3); }
-        .marquee-track { flex: 1; overflow: hidden; position: relative; height: 100%; display: flex; align-items: center; margin-left: 14px; }
-        .marquee-content { display: flex; white-space: nowrap; animation: marqueeScroll linear infinite; will-change: transform; font-weight: 500; color: #4a3f6b; font-size: 0.95rem; letter-spacing: 0.03em; padding-right: 40px; }
-        .marquee-content span { display: inline-block; padding-right: 50px; }
-        @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .marquee-track::after { content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 40px; background: linear-gradient(to right, transparent, rgba(248, 249, 252, 0.9)); pointer-events: none; z-index: 1; }
+        .marquee-banner {
+            margin: 14px 0 24px;
+            background: var(--gradient-subtle);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .marquee-label {
+            flex-shrink: 0;
+            background: var(--gradient);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.78rem;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-left: 10px;
+            letter-spacing: 0.04em;
+            z-index: 2;
+            white-space: nowrap;
+        }
+        .marquee-track {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin-left: 14px;
+        }
+        .marquee-content {
+            display: flex;
+            white-space: nowrap;
+            animation: marqueeScroll linear infinite;
+            will-change: transform;
+            font-weight: 500;
+            color: #4a3f6b;
+            font-size: 0.9rem;
+            padding-right: 40px;
+        }
+        .marquee-content span {
+            display: inline-block;
+            padding-right: 50px;
+        }
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        .marquee-track::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 40px;
+            background: linear-gradient(to right, transparent, rgba(248, 249, 252, 0.9));
+            pointer-events: none;
+            z-index: 1;
+        }
 
-        /* 进度条区域 */
-        .progress-section { background: var(--card-bg); border-radius: var(--radius-lg); padding: 22px 26px; margin-bottom: 28px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.08); transition: var(--transition); }
-        .progress-section:hover { box-shadow: var(--shadow-lg), var(--shadow-glow); border-color: rgba(139, 92, 246, 0.2); }
-        .progress-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .progress-year { font-weight: 800; font-size: 1.3rem; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.01em; }
-        .progress-stats { display: flex; align-items: baseline; gap: 6px; }
-        .progress-percent { font-family: var(--font-mono); font-size: 2rem; font-weight: 700; color: #4a3f6b; letter-spacing: -0.02em; line-height: 1; }
-        .progress-percent-sub { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
-        .progress-bar-outer { width: 100%; height: 12px; background: #eef1f8; border-radius: 20px; overflow: hidden; position: relative; box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06); }
-        .progress-bar-inner { height: 100%; background: var(--gradient); border-radius: 20px; position: relative; transition: width 1.2s cubic-bezier(0.25, 0.8, 0.25, 1.2); box-shadow: 0 0 14px rgba(139, 92, 246, 0.35), 0 0 6px rgba(91, 141, 239, 0.25); }
-        .progress-bar-inner::after { content: ''; position: absolute; top: 0; left: -60px; width: 50px; height: 100%; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 40%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.55) 60%, transparent 100%); animation: shimmer 2.4s ease-in-out infinite; border-radius: 20px; }
-        @keyframes shimmer { 0% { left: -60px; } 100% { left: calc(100% + 20px); } }
-        .progress-bar-outer::before { content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background: #fff; border-radius: 50%; z-index: 2; box-shadow: 0 0 10px rgba(139,92,246,0.7), 0 0 20px rgba(139,92,246,0.4); animation: dotPulse 2s ease-in-out infinite; left: var(--progress-pos, 32%); transition: left 1.2s cubic-bezier(0.25,0.8,0.25,1.2); }
-        @keyframes dotPulse { 0%,100% { box-shadow: 0 0 10px rgba(139,92,246,0.6), 0 0 20px rgba(139,92,246,0.3); } 50% { box-shadow: 0 0 18px rgba(139,92,246,0.9), 0 0 35px rgba(91,141,239,0.55), 0 0 50px rgba(139,92,246,0.3); } }
-        .progress-info { margin-top: 10px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); flex-wrap: wrap; gap: 4px; }
-        .progress-info span { font-family: var(--font-mono); font-size: 0.78rem; }
-        .days-remaining { color: #8b5cf6; font-weight: 600; }
+        /* 进度卡片 - 紧凑版 (百分比已放置右上角) */
+        .progress-section {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 18px 22px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(139, 92, 246, 0.08);
+            transition: var(--transition);
+        }
+        .progress-section:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .progress-year {
+            font-weight: 800;
+            font-size: 1.15rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .progress-stats {
+            display: flex;
+            align-items: baseline;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+        .progress-percent {
+            font-family: var(--font-mono);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #4a3f6b;
+            line-height: 1;
+        }
+        .progress-percent-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .progress-bar-outer {
+            width: 100%;
+            height: 12px;
+            background: #eef1f8;
+            border-radius: 20px;
+            overflow: visible;
+            position: relative;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 20px;
+            width: 0%;
+            transition: width 1.2s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 0 14px rgba(139, 92, 246, 0.35);
+            position: relative;
+            overflow: visible;
+        }
+        .progress-bar-inner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -60px;
+            width: 50px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.55) 60%, transparent 100%);
+            animation: shimmer 2.4s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0% {
+                left: -60px;
+            }
+            100% {
+                left: calc(100% + 20px);
+            }
+        }
+        /* 进度条末端人形图标 (增强可见性) */
+        .progress-person {
+            position: absolute;
+            right: -1px;
+            top: 50%;
+            transform: translate(50%, -50%);
+            font-size: 18px;
+            z-index: 3;
+            pointer-events: none;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.9)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.85));
+            line-height: 1;
+            transition: inherit;
+        }
+        .progress-info {
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .days-remaining {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
 
-        /* 全局访问量显示 */
         .global-visits {
-            margin-top: 14px;
-            padding-top: 12px;
+            margin-top: 12px;
+            padding-top: 10px;
             border-top: 1px dashed rgba(139, 92, 246, 0.25);
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #4a3f6b;
             font-weight: 500;
         }
         .global-visits i {
-            color: #8b5cf6;
-            font-size: 0.95rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .visits-number {
             font-family: var(--font-mono);
             font-weight: 700;
@@ -164,73 +505,454 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin: 0 3px;
+            margin: 0 4px;
         }
 
-        /* 卡片网格 */
-        .section-title { font-weight: 700; font-size: 1.15rem; margin-bottom: 16px; color: #3a3450; display: flex; align-items: center; gap: 8px; letter-spacing: 0.02em; }
-        .section-title::before { content: ''; display: inline-block; width: 4px; height: 18px; background: var(--gradient); border-radius: 4px; }
-        .section-title i { font-size: 1.05em; color: #8b5cf6; vertical-align: middle; transition: color 0.3s ease; }
-        .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
-        .link-card { display: block; background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; text-decoration: none; color: var(--text); box-shadow: var(--shadow-sm); border: 1px solid rgba(139, 92, 246, 0.06); transition: var(--transition); position: relative; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; outline: none; }
-        .link-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient); opacity: 0; transition: opacity 0.35s ease; border-radius: 0 0 3px 3px; }
-        .link-card:hover, .link-card:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-lg), 0 0 25px rgba(139, 92, 246, 0.12); border-color: rgba(139, 92, 246, 0.25); text-decoration: none; color: var(--text); }
-        .link-card:hover::before, .link-card:focus-visible::before { opacity: 1; }
-        .link-card:active { transform: scale(0.98); transition: 0.15s ease; }
-        .card-icon { font-size: 1.55rem; margin-bottom: 8px; display: inline-block; transition: transform 0.3s ease, color 0.3s ease; transform-origin: center center; line-height: 1; color: #7c6ff7; }
-        .link-card:hover .card-icon { transform: scale(1.08); color: #8b5cf6; }
-        .link-card:active .card-icon { transform: scale(0.96); }
-        .card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; letter-spacing: 0.01em; color: #2c2540; line-height: 1.3; }
-        .card-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
-        .card-tag { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-top: 8px; letter-spacing: 0.04em; background: var(--purple-light); color: #6b4fd4; transition: var(--transition); }
-        .link-card:hover .card-tag { background: #e8dffa; color: #5639c0; }
-        .card-arrow { position: absolute; top: 12px; right: 12px; font-size: 1rem; opacity: 0; transform: translateX(-6px); transition: var(--transition); color: #8b5cf6; pointer-events: none; }
-        .link-card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            color: #3a3450;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        .section-title i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-        .add-link-hint { background: var(--gradient-subtle); border: 2px dashed rgba(139, 92, 246, 0.25); border-radius: var(--radius); padding: 20px 18px; text-align: center; color: var(--text-secondary); font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 140px; cursor: default; transition: var(--transition); }
-        .add-link-hint:hover { border-color: rgba(139, 92, 246, 0.45); background: rgba(139, 92, 246, 0.04); }
-        .add-link-hint .hint-icon { font-size: 2rem; color: #8b5cf6; opacity: 0.55; transition: opacity 0.3s ease; }
-        .add-link-hint:hover .hint-icon { opacity: 0.8; }
-        .add-link-hint code { background: rgba(139, 92, 246, 0.1); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-family: var(--font-mono); color: #6b4fd4; }
+        /* 快速导航卡片网格 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        /* 卡片：增大圆角，去除固定宽高比，描述自适应 */
+        .link-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 15px 16px 13px;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(139, 92, 246, 0.06);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            min-height: 132px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            border-radius: 0 0 3px 3px;
+        }
+        .link-card:hover::before {
+            opacity: 1;
+        }
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg), 0 0 25px rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.25);
+            text-decoration: none;
+        }
+        .link-card:active {
+            transform: scale(0.98);
+        }
+        .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            flex-shrink: 0;
+            line-height: 1.2;
+        }
+        .link-card:hover .card-icon {
+            transform: scale(1.08);
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 0.93rem;
+            margin-bottom: 3px;
+            color: #2c2540;
+            padding-right: 26px;
+            flex-shrink: 0;
+            line-height: 1.3;
+        }
+        .card-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            margin-bottom: 4px;
+            padding-right: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-word;
+        }
+        .card-tag {
+            display: inline-block;
+            font-size: 0.66rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: auto;
+            background: var(--purple-light);
+            color: #6b4fd4;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+        .card-arrow {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: var(--transition);
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            pointer-events: none;
+            font-weight: 700;
+        }
+        .link-card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
-        .footer { text-align: center; padding: 20px; color: var(--text-secondary); font-size: 0.82rem; letter-spacing: 0.03em; border-top: 1px solid rgba(139, 92, 246, 0.1); margin-top: 10px; }
-        .footer .heart { color: #e74c8b; display: inline-block; animation: heartBeat 1.5s ease-in-out infinite; }
-        .footer .heart i { font-size: 0.95em; vertical-align: -0.05em; }
-        @keyframes heartBeat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.18); } 60% { transform: scale(1); } }
-        .footer a { color: #8b5cf6; text-decoration: none; font-weight: 500; transition: var(--transition); }
-        .footer a:hover { color: #5b8def; text-decoration: underline; }
-        .footer .footer-hint-icon { color: #8b5cf6; font-size: 0.85em; margin: 0 2px; vertical-align: -0.05em; }
+        /* 拖拽相关样式 (调试模式) */
+        .link-card.dragging {
+            opacity: 0.45;
+            transform: scale(0.96);
+            box-shadow: var(--shadow-sm);
+            border-style: dashed;
+            border-color: rgba(139, 92, 246, 0.4);
+            cursor: grabbing;
+            transition: none;
+        }
+        .link-card.drag-over {
+            border-color: rgba(139, 92, 246, 0.5) !important;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), var(--shadow-md) !important;
+            background: #fdfbff;
+            transform: scale(1.02);
+            transition: 0.15s ease;
+            z-index: 5;
+        }
+        .link-card.draggable-card {
+            cursor: grab;
+        }
+        .link-card.draggable-card:active {
+            cursor: grabbing;
+        }
+
+        /* 编辑按钮 */
+        .card-edit-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s ease;
+            z-index: 10;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            backdrop-filter: blur(2px);
+        }
+        .card-edit-btn:hover {
+            background: #8b5cf6;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.45);
+        }
+        .debug-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(139, 92, 246, 0.88);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 7px 16px;
+            border-radius: 40px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            z-index: 99;
+            pointer-events: none;
+            font-family: var(--font-mono);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+            letter-spacing: 0.02em;
+        }
+        .add-link-hint {
+            background: var(--gradient-subtle);
+            border: 2px dashed rgba(139, 92, 246, 0.25);
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            text-align: center;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
+        }
+        .footer {
+            text-align: center;
+            padding: 18px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+            margin-top: 8px;
+        }
+        .footer .heart {
+            color: #e74c8b;
+            display: inline-block;
+            animation: heartBeat 1.5s ease-in-out infinite;
+        }
+        @keyframes heartBeat {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            15% {
+                transform: scale(1.25);
+            }
+            30% {
+                transform: scale(1);
+            }
+            45% {
+                transform: scale(1.18);
+            }
+            60% {
+                transform: scale(1);
+            }
+        }
+        .footer a {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+            text-decoration-color: #8b5cf6;
+        }
+
+        /* 模态框 */
+        .edit-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.22s;
+        }
+        .edit-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .edit-modal {
+            background: white;
+            width: 90%;
+            max-width: 420px;
+            border-radius: 28px;
+            padding: 26px 22px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+        .edit-modal h3 {
+            font-size: 1.5rem;
+            margin-bottom: 14px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .edit-modal input,
+        .edit-modal textarea {
+            width: 100%;
+            padding: 11px 13px;
+            margin: 7px 0 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 18px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            transition: 0.2s;
+            resize: vertical;
+        }
+        .edit-modal input:focus,
+        .edit-modal textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .edit-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .edit-modal-buttons button {
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            background: #eef2ff;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.88rem;
+        }
+        .edit-modal-buttons button.save-btn {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+        .edit-modal-buttons button.save-btn:hover {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
 
         @media (max-width: 640px) {
-            .main-container { padding: 12px 14px 36px; }
-            .header { padding: 24px 10px 16px; }
-            .site-title { font-size: 1.6rem; }
-            .site-subtitle { font-size: 0.85rem; }
-            .logo-emoji { font-size: 42px; }
-            .logo-ring { width: 66px; height: 66px; }
-            .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .link-card { padding: 12px 10px; }
-            .card-icon { font-size: 1.4rem; }
-            .card-title { font-size: 0.88rem; }
-            .card-desc { font-size: 0.76rem; }
-            .card-arrow { top: 10px; right: 10px; }
-            .progress-section { padding: 16px 14px; border-radius: var(--radius); }
-            .progress-percent { font-size: 1.5rem; }
-            .marquee-banner { height: 38px; margin: 10px 0 20px; border-radius: var(--radius-sm); }
-            .marquee-label { font-size: 0.7rem; padding: 4px 10px; margin-left: 6px; }
-            .marquee-content { font-size: 0.8rem; }
-            .marquee-content span { padding-right: 30px; }
-            .global-visits { font-size: 0.8rem; }
+            .main-container {
+                padding: 10px 12px 32px;
+            }
+            .cards-grid {
+                gap: 10px;
+            }
+            .link-card {
+                min-height: 120px;
+                padding: 12px 13px 10px;
+                border-radius: var(--radius);
+            }
+            .card-title {
+                font-size: 0.85rem;
+                padding-right: 22px;
+            }
+            .card-desc {
+                font-size: 0.73rem;
+                -webkit-line-clamp: 2;
+            }
+            .card-edit-btn {
+                width: 26px;
+                height: 26px;
+                bottom: 8px;
+                right: 8px;
+                font-size: 0.8rem;
+            }
+            .card-arrow {
+                top: 8px;
+                right: 8px;
+                font-size: 0.9rem;
+            }
+            .card-icon {
+                font-size: 1.35rem;
+            }
+            .progress-section {
+                padding: 14px 16px;
+                border-radius: var(--radius);
+            }
+            .progress-percent {
+                font-size: 1.2rem;
+            }
+            .progress-year {
+                font-size: 1rem;
+            }
+            .progress-person {
+                font-size: 16px;
+            }
+            .header {
+                padding: 28px 14px 16px;
+            }
+            .site-title {
+                font-size: 1.7rem;
+            }
+            .marquee-banner {
+                height: 40px;
+                border-radius: var(--radius-sm);
+            }
+            .marquee-label {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+                margin-left: 6px;
+            }
+            .marquee-content {
+                font-size: 0.8rem;
+            }
         }
         @media (max-width: 380px) {
-            .progress-header { flex-direction: column; gap: 2px; }
-            .progress-stats { align-self: flex-start; }
+            .progress-header {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .cards-grid {
+                gap: 8px;
+            }
+            .link-card {
+                min-height: 110px;
+                padding: 10px 11px 8px;
+            }
+            .card-desc {
+                -webkit-line-clamp: 2;
+                font-size: 0.7rem;
+            }
+            .card-title {
+                font-size: 0.8rem;
+            }
+            .card-tag {
+                font-size: 0.6rem;
+                padding: 2px 8px;
+            }
         }
-        .link-card:focus-visible { outline: 3px solid rgba(139, 92, 246, 0.5); outline-offset: 3px; }
-        @media print {
-            .bg-grid, .bg-orb, .floating-dots, .marquee-banner, .progress-bar-outer::before, .progress-bar-inner::after { display: none !important; }
-            body { background: #fff; }
-            .link-card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+        .link-card:focus-visible {
+            outline: 3px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 3px;
         }
     </style>
 </head>
@@ -239,45 +961,41 @@
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
     <div class="bg-orb orb-3"></div>
-    <div class="floating-dots">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-    </div>
+    <div class="floating-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
 
     <div class="main-container">
         <header class="header">
-            <div class="logo-wrap">
-                <span class="logo-emoji" title="打工人门户">🚀</span>
+            <div class="logo-wrap" id="rocketTrigger">
+                <span class="logo-emoji" title="打工人小火箭 · 连点7次开启调试模式">🚀</span>
                 <div class="logo-ring"></div>
             </div>
             <h1 class="site-title">🌟 Blog Portal 💫</h1>
             <p class="site-subtitle">🧑🏻‍🔧 搬砖路上，再忙也要记录生活哟! ✨</p>
         </header>
 
-        <div class="marquee-banner" id="marqueeBanner">
+        <div class="marquee-banner">
             <span class="marquee-label">💬 Slogans</span>
-            <div class="marquee-track">
-                <div class="marquee-content" id="marqueeContent"></div>
-            </div>
+            <div class="marquee-track"><div class="marquee-content" id="marqueeContent"></div></div>
         </div>
 
-        <section class="progress-section" id="progressSection">
+        <section class="progress-section">
             <div class="progress-header">
-                <span class="progress-year">📅 2026 年进度 </span>
+                <span class="progress-year">📅 2026 年进度</span>
                 <div class="progress-stats">
                     <span class="progress-percent" id="progressPercent">--</span>
                     <span class="progress-percent-sub">%</span>
                 </div>
             </div>
-            <div class="progress-bar-outer" id="progressBarOuter">
-                <div class="progress-bar-inner" id="progressBarInner" style="width: 0%;"></div>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBarInner">
+                    <span class="progress-person"><i class="fa-solid fa-person-walking"></i></span>
+                </div>
             </div>
             <div class="progress-info">
                 <span>已过去 <strong id="daysElapsed">--</strong> 天</span>
                 <span class="days-remaining">剩余 <strong id="daysRemaining">--</strong> 天</span>
                 <span>日均进度 <strong id="dailyAvg">--</strong>%</span>
             </div>
-            <!-- 🌐 总访问量显示区域 -->
             <div class="global-visits">
                 <i class="fa-solid fa-earth-americas"></i>
                 <span>总访问量</span>
@@ -292,181 +1010,372 @@
         </section>
 
         <footer class="footer">
-            <p>Designed by @YeoChing <span class="heart"><i class="fa-solid fa-heart"></i></span> Working on
-                <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
-            </p>
-            <p style="font-size:0.75rem;margin-top:4px;">修改 <code style="background:rgba(139,92,246,0.08);padding:2px 6px;border-radius:4px;">linksData</code> 数组即可添加新页面链接 <i class="fa-solid fa-bullseye footer-hint-icon"></i></p>
+            <p>Designed by @YeoChing <span class="heart"><i class="fa-solid fa-heart"></i></span> Working on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a></p>
         </footer>
+    </div>
+
+    <div id="editModal" class="edit-modal-overlay">
+        <div class="edit-modal">
+            <h3>✏️ 编辑卡片</h3>
+            <label>标题</label>
+            <input id="editTitle" placeholder="卡片标题">
+            <label>描述</label>
+            <textarea id="editDesc" rows="2" placeholder="简短描述"></textarea>
+            <label>链接地址 (URL)</label>
+            <input id="editUrl" placeholder="例如: /page.html 或 https://...">
+            <div class="edit-modal-buttons">
+                <button id="cancelEditBtn">取消</button>
+                <button id="confirmEditBtn" class="save-btn">保存修改</button>
+            </div>
+        </div>
     </div>
 
     <script>
         (function() {
-            // ========== 全局总访问量计数器配置（使用 counterapi.dev） ==========
-            const COUNTER_NAMESPACE = 'yeochin6.blog';  // 你的唯一命名空间
-            const COUNTER_KEY = 'total_visits';         // 总访问量 key
-
-            // ========== 链接数据 ==========
-            const linksData = [
-                { title: '-考勤面板', url: 'Over_Time.html', desc: '我的第一篇博客门户，记录加班时数与薪得。', icon: 'fa-solid fa-pen-to-square', tag: '考勤' },
-                { title: '-单位换算', url: 'Unit_Trans.html', desc: '一键完成多项数据的公制_英制切换。', icon: 'fa-solid fa-laptop-code', tag: '单位' },
-                { title: '-JMP数据统计分析', url: 'JMP_Pro.html', desc: '简洁易上手的数据统计分析工具。', icon: 'fa-solid fa-screwdriver-wrench', tag: 'JMP' },
-                { title: '-阅读书单', url: 'reading.html', desc: '最近在读的书和阅读笔记整理。', icon: 'fa-solid fa-book-open', tag: '笔记' },
-                { title: '-友情链接', url: 'friends.html', desc: '朋友们的博客和推荐站点。', icon: 'fa-solid fa-link', tag: '链接' },
-                { title: '-留言板', url: 'guestbook.html', desc: '欢迎留下你的足迹和想法。', icon: 'fa-solid fa-envelope', tag: '互动' },
+            const DEFAULT_LINKS = [
+                { title: '-考勤面板', url: 'Over_Time.html', desc: '我的第一篇博客门户，记录加班时数与薪得。', icon: 'fa-solid fa-pen-to-square',
+                    tag: '考勤' },
+                { title: '-单位换算', url: 'Unit_Trans.html', desc: '一键完成多项数据的公制_英制切换，快速实用。', icon: 'fa-solid fa-laptop-code',
+                    tag: '单位' },
+                { title: '-JMP数据统计分析', url: 'JMP_Pro.html', desc: '简洁易上手的数据统计分析工具，效率倍增。', icon: 'fa-solid fa-screwdriver-wrench',
+                    tag: 'JMP' },
+                { title: '-阅读书单', url: 'reading.html', desc: '最近在读的书和阅读笔记整理，持续更新中。', icon: 'fa-solid fa-book-open',
+                tag: '笔记' },
+                { title: '-友情链接', url: 'friends.html', desc: '朋友们的博客和推荐站点，欢迎互链。', icon: 'fa-solid fa-link', tag: '链接' },
+                { title: '-留言板', url: 'guestbook.html', desc: '欢迎留下你的足迹和想法，一起交流。', icon: 'fa-solid fa-envelope',
+                tag: '互动' }
             ];
 
+            let linksData = [];
+            let debugMode = false;
+            let clickCount = 0;
+            let clickTimer = null;
+            let dragSourceIndex = null;
+
+            const rocket = document.getElementById('rocketTrigger');
+            const cardsGrid = document.getElementById('cardsGrid');
+            let debugBadge = null;
+
             const slogans = [
-                '今天睡地板，明天当老板。',
-                '拼一次，富三代，拼命才能不失败！💨',
-                '想成功，先发疯，不顾一切向钱冲！🏃',
-                '今日搬砖不狠，明天地位不稳 💪',
-                '代码敲得响，工资涨得慢 📉 — 那也得敲！',
-                '白天写Bug，晚上修Bug，第二天继续写Bug 🔄',
-                '摸鱼是一种生活态度 🐟 但别被老板发现！',
-                '只要我敲得够快，Bug就追不上我 ⚡',
-                '打工人，打工魂，打工都是人上人 ✨',
-                '生命不息，搬砖不止 🧱',
-                '需求改了一百遍，我待需求如初恋 💔',
-                '今天也是元气满满的打工人！☀️（骗自己的）',
-                '咖啡续命，代码续梦 ☕',
-                '我不是在写代码，我是在创造世界 🌍',
-                ' Deadline是第一生产力 ⏰',
-                '键盘敲烂，工资过万 💰（希望如此）',
-                ' Git commit -m "又是打工的一天"',
-                '世界上本没有Bug，写的人多了就有了 🐛',
-                '卷不动了，开摆！🛋️ …算了还是再卷一会儿',
-                ' Ctrl+C、Ctrl+V 高级工程师 📋',
-                '我和成功之间，只差一个不报错的项目 🎯',
-                '周一到周五：生存；周末：生活 🌈',
-                '熬夜写代码的人，运气不会太差 🌙',
-                '老板画的饼，我一口都吃不下 🥞',
-                '需求评审一时爽，代码重构火葬场 🔥',
-                '今天你debug了吗？🐞',
-                '代码和人，有一个能跑就行 🏃',
-                '打工人终将崛起！🚀',
+                '今天睡地板，明天当老板。', '拼一次，富三代，拼命才能不失败！💨', '想成功，先发疯，不顾一切向钱冲！🏃',
+                '今日搬砖不狠，明天地位不稳 💪', '代码敲得响，工资涨得慢 — 那也得敲！',
+                '白天写Bug，晚上修Bug，第二天继续写Bug 🔄', '摸鱼是一种生活态度 🐟 但别被老板发现！',
+                '只要我敲得够快，Bug就追不上我 ⚡', '打工人，打工魂，打工都是人上人 ✨', '生命不息，搬砖不止 🧱',
+                '需求改了一百遍，我待需求如初恋 💔', '今天也是元气满满的打工人！☀️（骗自己的）', '咖啡续命，代码续梦 ☕',
+                '我不是在写代码，我是在创造世界 🌍', 'Deadline是第一生产力 ⏰', '键盘敲烂，工资过万 💰（希望如此）',
+                'Git commit -m "又是打工的一天"', '世界上本没有Bug，写的人多了就有了 🐛',
+                '卷不动了，开摆！🛋️ …算了还是再卷一会儿', 'Ctrl+C、Ctrl+V 高级工程师 📋',
+                '我和成功之间，只差一个不报错的项目 🎯', '周一到周五：生存；周末：生活 🌈', '熬夜写代码的人，运气不会太差 🌙',
+                '老板画的饼，我一口都吃不下 🥞', '需求评审一时爽，代码重构火葬场 🔥', '今天你debug了吗？🐞',
+                '代码和人，有一个能跑就行 🏃', '打工人终将崛起！🚀'
             ];
 
             function getRandomSlogan() {
-                const storageKey = 'blog_portal_last_slogan_index';
-                const lastIndex = parseInt(localStorage.getItem(storageKey), 10);
-                let newIndex;
-                if (slogans.length === 1) {
-                    newIndex = 0;
-                } else {
-                    do {
-                        newIndex = Math.floor(Math.random() * slogans.length);
-                    } while (newIndex === lastIndex && slogans.length > 1);
-                }
-                localStorage.setItem(storageKey, newIndex);
-                return slogans[newIndex];
+                const last = localStorage.getItem('blog_last_slogan_idx');
+                let idx = Math.floor(Math.random() * slogans.length);
+                if (slogans.length > 1 && idx == last) idx = (idx + 1) % slogans.length;
+                localStorage.setItem('blog_last_slogan_idx', idx);
+                return slogans[idx];
             }
 
             function renderMarquee() {
                 const slogan = getRandomSlogan();
-                const marqueeContent = document.getElementById('marqueeContent');
-                const repeatCount = 8;
-                const spans = [];
-                for (let i = 0; i < repeatCount; i++) {
-                    spans.push(`<span>${slogan}</span>`);
-                }
-                marqueeContent.innerHTML = spans.join('');
-                const charCount = slogan.length;
-                const baseSpeed = charCount * 1.8 + 15;
-                marqueeContent.style.animationDuration = baseSpeed + 's';
+                const repeat = 8;
+                const spans = Array(repeat).fill(`<span>${slogan}</span>`).join('');
+                document.getElementById('marqueeContent').innerHTML = spans;
+                const speed = slogan.length * 1.8 + 15;
+                document.getElementById('marqueeContent').style.animationDuration = speed + 's';
             }
 
             function updateProgress() {
                 const now = new Date();
                 const year = now.getFullYear();
-                const startOfYear = new Date(year, 0, 1);
-                const endOfYear = new Date(year + 1, 0, 1);
-                const totalMs = endOfYear - startOfYear;
-                const elapsedMs = now - startOfYear;
-                const progressPercent = Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
-
+                const start = new Date(year, 0, 1);
+                const end = new Date(year + 1, 0, 1);
+                const total = end - start;
+                const elapsed = now - start;
+                let percent = (elapsed / total) * 100;
+                percent = Math.min(100, percent);
                 const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
                 const totalDays = isLeap ? 366 : 365;
-                const dayOfYear = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
-                const daysRemaining = totalDays - dayOfYear;
-                const dailyAvg = (100 / totalDays).toFixed(3);
-
-                document.getElementById('progressPercent').textContent = progressPercent.toFixed(2);
-                document.getElementById('daysElapsed').textContent = dayOfYear;
-                document.getElementById('daysRemaining').textContent = daysRemaining;
-                document.getElementById('dailyAvg').textContent = dailyAvg;
-
-                const progressBarInner = document.getElementById('progressBarInner');
-                setTimeout(() => { progressBarInner.style.width = progressPercent + '%'; }, 200);
-                const progressBarOuter = document.getElementById('progressBarOuter');
-                progressBarOuter.style.setProperty('--progress-pos', progressPercent + '%');
-                document.querySelector('.progress-year').textContent = '📅 ' + year + ' 年进度 ';
+                const day = Math.floor(elapsed / 86400000);
+                const remain = totalDays - day;
+                const daily = (100 / totalDays).toFixed(3);
+                document.getElementById('progressPercent').innerText = percent.toFixed(2);
+                document.getElementById('daysElapsed').innerText = day;
+                document.getElementById('daysRemaining').innerText = remain;
+                document.getElementById('dailyAvg').innerText = daily;
+                const inner = document.getElementById('progressBarInner');
+                setTimeout(() => { inner.style.width = percent + '%'; }, 100);
             }
 
-            // 获取并更新总访问量（通过 counterapi.dev）
-            async function fetchGlobalVisits() {
-                const countEl = document.getElementById('globalVisitsCount');
-                try {
-                    const response = await fetch(
-                        `https://api.counterapi.dev/v1/${COUNTER_NAMESPACE}/${COUNTER_KEY}/up`
-                    );
-                    if (!response.ok) throw new Error('计数服务暂时不可用');
-                    const data = await response.json();
-                    if (data && data.value !== undefined) {
-                        countEl.textContent = data.value.toLocaleString();
-                    } else {
-                        countEl.textContent = '---';
-                    }
-                } catch (error) {
-                    console.warn('总访问量获取失败:', error);
-                    countEl.textContent = '---';
+            function updateLocalVisitCount() {
+                let visits = localStorage.getItem('local_total_visits');
+                let count = visits ? parseInt(visits, 10) : 0;
+                count += 1;
+                localStorage.setItem('local_total_visits', count);
+                document.getElementById('globalVisitsCount').innerText = count.toLocaleString();
+            }
+
+            function persistLinks() {
+                localStorage.setItem('saved_links_data', JSON.stringify(linksData));
+            }
+
+            function loadLinksData() {
+                const stored = localStorage.getItem('saved_links_data');
+                if (stored) {
+                    linksData = JSON.parse(stored);
+                } else {
+                    linksData = JSON.parse(JSON.stringify(DEFAULT_LINKS));
+                    persistLinks();
                 }
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
             }
 
             function renderCards() {
-                const grid = document.getElementById('cardsGrid');
-                if (linksData.length === 0) {
-                    grid.innerHTML = `
-                        <div class="add-link-hint">
-                            <span class="hint-icon"><i class="fa-solid fa-clipboard-list"></i></span>
-                            <span>还没有添加链接</span>
-                            <span>在 <code>linksData</code> 数组中添加你的HTML页面吧！</span>
-                        </div>`;
+                if (!cardsGrid) return;
+                if (!linksData.length) {
+                    cardsGrid.innerHTML =
+                        `<div class="add-link-hint"><span class="hint-icon"><i class="fa-solid fa-clipboard-list"></i></span><span>暂无链接，请在调试模式下添加</span></div>`;
                     return;
                 }
-                const cardsHTML = linksData.map(link => {
-                    const iconClass = link.icon || 'fa-solid fa-file';
-                    const tagHTML = link.tag ? `<span class="card-tag">${link.tag}</span>` : '';
-                    return `
-                        <a href="${link.url}" class="link-card" title="跳转到：${link.title}">
+                let html = '';
+                linksData.forEach((link, idx) => {
+                    const icon = link.icon || 'fa-solid fa-file';
+                    const tagHtml = link.tag ? `<span class="card-tag">${escapeHtml(link.tag)}</span>` : '';
+                    const editBtnHtml = debugMode ?
+                        `<span class="card-edit-btn" data-edit-index="${idx}"><i class="fa-solid fa-pencil"></i></span>` :
+                        '';
+                    const dragClass = debugMode ? ' draggable-card' : '';
+                    const dragAttr = debugMode ? ' draggable="true"' : '';
+                    html += `
+                        <a href="${escapeHtml(link.url)}"
+                           class="link-card${dragClass}"
+                           target="_self"
+                           data-card-index="${idx}"
+                           ${dragAttr}>
                             <span class="card-arrow">→</span>
-                            <span class="card-icon"><i class="${iconClass}"></i></span>
-                            <div class="card-title">${link.title}</div>
-                            <div class="card-desc">${link.desc || ''}</div>
-                            ${tagHTML}
+                            <span class="card-icon"><i class="${icon}"></i></span>
+                            <div class="card-title">${escapeHtml(link.title)}</div>
+                            <div class="card-desc">${escapeHtml(link.desc || '')}</div>
+                            ${tagHtml}
+                            ${editBtnHtml}
                         </a>`;
-                }).join('');
-                grid.innerHTML = cardsHTML;
+                });
+                cardsGrid.innerHTML = html;
+
+                if (debugMode) {
+                    document.querySelectorAll('.card-edit-btn').forEach(btn => {
+                        btn.removeEventListener('click', handleEditClick);
+                        btn.addEventListener('click', handleEditClick);
+                    });
+                    bindDragEvents();
+                }
             }
+
+            function bindDragEvents() {
+                if (!debugMode) return;
+                const cards = cardsGrid.querySelectorAll('.link-card');
+                cards.forEach(card => {
+                    card.removeEventListener('dragstart', onDragStart);
+                    card.removeEventListener('dragend', onDragEnd);
+                    card.addEventListener('dragstart', onDragStart);
+                    card.addEventListener('dragend', onDragEnd);
+                });
+                cardsGrid.removeEventListener('dragover', onDragOver);
+                cardsGrid.removeEventListener('drop', onDrop);
+                cardsGrid.addEventListener('dragover', onDragOver);
+                cardsGrid.addEventListener('drop', onDrop);
+            }
+
+            function onDragStart(e) {
+                if (!debugMode) return;
+                const card = e.target.closest('.link-card');
+                if (!card) return;
+                const idxAttr = card.getAttribute('data-card-index');
+                if (idxAttr === null) return;
+                dragSourceIndex = parseInt(idxAttr, 10);
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', dragSourceIndex.toString());
+                try {
+                    const rect = card.getBoundingClientRect();
+                    e.dataTransfer.setDragImage(card, rect.width / 2, rect.height / 2);
+                } catch (ex) {}
+                setTimeout(() => {
+                    if (card.classList.contains('dragging')) {
+                        card.style.opacity = '0.45';
+                    }
+                }, 0);
+            }
+
+            function onDragEnd(e) {
+                if (!debugMode) return;
+                const card = e.target.closest('.link-card');
+                if (card) {
+                    card.classList.remove('dragging');
+                    card.style.opacity = '';
+                }
+                cardsGrid.querySelectorAll('.link-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+                dragSourceIndex = null;
+            }
+
+            function onDragOver(e) {
+                if (!debugMode) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                const card = e.target.closest('.link-card');
+                cardsGrid.querySelectorAll('.link-card.drag-over').forEach(c => {
+                    if (c !== card) c.classList.remove('drag-over');
+                });
+                if (card && dragSourceIndex !== null) {
+                    const idxAttr = card.getAttribute('data-card-index');
+                    if (idxAttr !== null && parseInt(idxAttr, 10) !== dragSourceIndex) {
+                        card.classList.add('drag-over');
+                    }
+                }
+            }
+
+            function onDrop(e) {
+                if (!debugMode) return;
+                e.preventDefault();
+                const card = e.target.closest('.link-card');
+                cardsGrid.querySelectorAll('.link-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+                if (!card || dragSourceIndex === null) {
+                    dragSourceIndex = null;
+                    return;
+                }
+                const targetIdxAttr = card.getAttribute('data-card-index');
+                if (targetIdxAttr === null) {
+                    dragSourceIndex = null;
+                    return;
+                }
+                const targetIndex = parseInt(targetIdxAttr, 10);
+                if (targetIndex === dragSourceIndex) {
+                    dragSourceIndex = null;
+                    return;
+                }
+                const movedItem = linksData.splice(dragSourceIndex, 1)[0];
+                linksData.splice(targetIndex, 0, movedItem);
+                persistLinks();
+                renderCards();
+                dragSourceIndex = null;
+                console.log('%c📦 卡片已重新排序', 'color:#8b5cf6; font-weight:bold');
+            }
+
+            let currentEditIndex = null;
+            const modal = document.getElementById('editModal');
+            const editTitle = document.getElementById('editTitle');
+            const editDesc = document.getElementById('editDesc');
+            const editUrl = document.getElementById('editUrl');
+
+            function openEditModal(index) {
+                const link = linksData[index];
+                if (!link) return;
+                currentEditIndex = index;
+                editTitle.value = link.title || '';
+                editDesc.value = link.desc || '';
+                editUrl.value = link.url || '';
+                modal.classList.add('active');
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+                currentEditIndex = null;
+            }
+
+            function saveEdit() {
+                if (currentEditIndex === null) return;
+                const newTitle = editTitle.value.trim();
+                const newDesc = editDesc.value.trim();
+                const newUrl = editUrl.value.trim();
+                if (!newTitle) { alert('标题不能为空');
+                    return; }
+                if (!newUrl) { alert('链接地址不能为空');
+                    return; }
+                linksData[currentEditIndex].title = newTitle;
+                linksData[currentEditIndex].desc = newDesc;
+                linksData[currentEditIndex].url = newUrl;
+                persistLinks();
+                renderCards();
+                closeModal();
+            }
+
+            function handleEditClick(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                const btn = e.currentTarget;
+                const idxAttr = btn.getAttribute('data-edit-index');
+                if (idxAttr !== null) openEditModal(parseInt(idxAttr, 10));
+            }
+
+            function setDebugMode(enable) {
+                debugMode = enable;
+                if (debugMode) {
+                    if (!debugBadge) {
+                        debugBadge = document.createElement('div');
+                        debugBadge.className = 'debug-badge';
+                        debugBadge.innerHTML = '🔧 调试模式 (可编辑&拖拽排序卡片)';
+                        document.body.appendChild(debugBadge);
+                    } else {
+                        debugBadge.style.display = 'flex';
+                    }
+                    console.log('%c✨ 调试模式已开启', 'color:#8b5cf6; font-weight:bold');
+                } else {
+                    if (debugBadge) debugBadge.style.display = 'none';
+                }
+                renderCards();
+                dragSourceIndex = null;
+                cardsGrid.querySelectorAll('.link-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+            }
+
+            function onRocketClick() {
+                clearTimeout(clickTimer);
+                clickCount++;
+                clickTimer = setTimeout(() => { clickCount = 0; }, 600);
+                if (clickCount >= 7) {
+                    clickCount = 0;
+                    clearTimeout(clickTimer);
+                    const newMode = !debugMode;
+                    setDebugMode(newMode);
+                    const msg = newMode ?
+                        '🚀 调试模式已开启！\n\n✏️ 点击卡片铅笔图标可编辑\n↔️ 拖拽卡片可调整排序' :
+                        '🔒 调试模式已关闭';
+                    alert(msg);
+                }
+            }
+
+            document.getElementById('confirmEditBtn').addEventListener('click', saveEdit);
+            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
 
             function init() {
+                loadLinksData();
                 renderMarquee();
                 updateProgress();
+                updateLocalVisitCount();
                 renderCards();
-                fetchGlobalVisits();  // 启动总访问量计数
                 setInterval(updateProgress, 60000);
+                if (rocket) rocket.addEventListener('click', onRocketClick);
             }
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
-
-            console.log('%c🚀 打工人博客门户已就绪 %c| %c' + new Date().toLocaleString(),
-                'font-size:1.2em;font-weight:bold;color:#8b5cf6;', '', 'color:#5a6c7d;');
-            console.log('%c💡 提示：编辑 linksData 数组即可添加新的HTML链接', 'color:#5b8def;font-weight:500;');
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
         })();
     </script>
 </body>
 </html>
-            
