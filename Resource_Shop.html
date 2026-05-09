@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>资源工坊 · 软件固件</title>
+    <!-- Font Awesome 6 (免费CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg: #f8f9fc;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --blue: #5b8def;
+            --purple: #8b5cf6;
+            --blue-light: #e8f0fe;
+            --purple-light: #f3eeff;
+            --gradient: linear-gradient(135deg, #5b8def 0%, #7c6ff7 40%, #8b5cf6 70%, #a78bfa 100%);
+            --gradient-h: linear-gradient(135deg, #4a7de0 0%, #6b5ef0 40%, #7b4de8 70%, #9370e8 100%);
+            --gradient-subtle: linear-gradient(135deg, rgba(91, 141, 239, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10), 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.25), 0 0 60px rgba(91, 141, 239, 0.12);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Monaco', 'Menlo', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* -------------------- 增强粒子动效 -------------------- */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.35;
+            background-image:
+                radial-gradient(circle, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: radial-gradient(ellipse 65% 55% at 50% 35%, black 30%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 35%, black 30%, transparent 70%);
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(90px);
+            opacity: 0.14;
+            animation: orbFloat 14s ease-in-out infinite;
+        }
+        .bg-orb.orb-1 {
+            width: 380px;
+            height: 380px;
+            background: #8b5cf6;
+            top: -8%;
+            left: -6%;
+            animation-delay: 0s;
+            animation-duration: 16s;
+        }
+        .bg-orb.orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #5b8def;
+            bottom: -10%;
+            right: -5%;
+            animation-delay: -5s;
+            animation-duration: 18s;
+        }
+        .bg-orb.orb-3 {
+            width: 220px;
+            height: 220px;
+            background: #a78bfa;
+            top: 45%;
+            left: 55%;
+            animation-delay: -9s;
+            animation-duration: 13s;
+            opacity: 0.09;
+        }
+        .bg-orb.orb-4 {
+            width: 260px;
+            height: 260px;
+            background: #8b5cf6;
+            bottom: 15%;
+            left: 10%;
+            animation-delay: -3s;
+            animation-duration: 20s;
+            opacity: 0.1;
+        }
+        .bg-orb.orb-5 {
+            width: 340px;
+            height: 340px;
+            background: #5b8def;
+            top: 20%;
+            right: -12%;
+            animation-delay: -7s;
+            animation-duration: 22s;
+            opacity: 0.08;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(40px, -30px) scale(1.12); }
+            50% { transform: translate(-20px, 25px) scale(0.92); }
+            75% { transform: translate(-35px, -15px) scale(1.08); }
+        }
+
+        .floating-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .floating-dots .dot {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--purple);
+            animation: dotDrift 20s linear infinite;
+            opacity: 0;
+        }
+        .dot:nth-child(1) { width: 5px; height: 5px; left: 10%; top: 20%; animation-delay: 0s; animation-duration: 22s; background: #8b5cf6; }
+        .dot:nth-child(2) { width: 3px; height: 3px; left: 25%; top: 60%; animation-delay: -5s; animation-duration: 19s; background: #5b8def; }
+        .dot:nth-child(3) { width: 4px; height: 4px; left: 55%; top: 15%; animation-delay: -10s; animation-duration: 24s; background: #7c6ff7; }
+        .dot:nth-child(4) { width: 6px; height: 6px; left: 70%; top: 70%; animation-delay: -3s; animation-duration: 21s; background: #a78bfa; }
+        .dot:nth-child(5) { width: 3px; height: 3px; left: 40%; top: 35%; animation-delay: -14s; animation-duration: 26s; background: #5b8def; }
+        .dot:nth-child(6) { width: 4px; height: 4px; left: 85%; top: 40%; animation-delay: -8s; animation-duration: 18s; background: #8b5cf6; }
+        .dot:nth-child(7) { width: 7px; height: 7px; left: 15%; top: 80%; animation-delay: -2s; animation-duration: 28s; background: #8b5cf6; opacity: 0.6; }
+        .dot:nth-child(8) { width: 5px; height: 5px; left: 63%; top: 55%; animation-delay: -12s; animation-duration: 23s; background: #7c6ff7; }
+        .dot:nth-child(9) { width: 3px; height: 3px; left: 90%; top: 15%; animation-delay: -6s; animation-duration: 17s; background: #a78bfa; }
+        .dot:nth-child(10) { width: 4px; height: 4px; left: 32%; top: 92%; animation-delay: -18s; animation-duration: 30s; background: #5b8def; }
+        .dot:nth-child(11) { width: 6px; height: 6px; left: 5%; top: 48%; animation-delay: -9s; animation-duration: 25s; background: #8b5cf6; }
+        .dot:nth-child(12) { width: 3px; height: 3px; left: 78%; top: 28%; animation-delay: -15s; animation-duration: 27s; background: #8b5cf6; }
+
+        @keyframes dotDrift {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            5% { opacity: 0.8; transform: translate(15px, -30px) scale(1); }
+            15% { opacity: 1; transform: translate(50px, -80px) scale(1.4); }
+            30% { opacity: 0.5; transform: translate(120px, -50px) scale(0.7); }
+            50% { opacity: 0.15; transform: translate(80px, 30px) scale(0.3); }
+            70% { opacity: 0; transform: translate(-30px, 60px) scale(0); }
+            100% { transform: translate(0, 0) scale(0); opacity: 0; }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 20px 24px 50px;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 40px 20px 24px;
+            position: relative;
+        }
+        .logo-wrap {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .logo-wrap:active { transform: scale(0.97); }
+        .logo-icon {
+            font-size: 56px;
+            display: inline-block;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: logoBounce 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 20px rgba(139, 92, 246, 0.4));
+        }
+        @keyframes logoBounce {
+            0%,100% { transform: translateY(0); }
+            30% { transform: translateY(-14px); }
+            50% { transform: translateY(0); }
+            70% { transform: translateY(-7px); }
+            85% { transform: translateY(0); }
+        }
+        .logo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px dashed rgba(139, 92, 246, 0.35);
+            animation: ringSpin 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes ringSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+        .site-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        .site-title i, .site-subtitle i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0 4px;
+        }
+        .site-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.04em;
+        }
+
+        .marquee-banner {
+            margin: 16px 0 28px;
+            background: var(--gradient-subtle);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: var(--radius);
+            overflow: hidden;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(4px);
+        }
+        .marquee-label {
+            flex-shrink: 0;
+            background: var(--gradient);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-left: 10px;
+            letter-spacing: 0.05em;
+            z-index: 2;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+        }
+        .marquee-label i { margin-right: 6px; color: white; }
+        .marquee-track {
+            flex: 1;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin-left: 14px;
+        }
+        .marquee-content {
+            display: flex;
+            white-space: nowrap;
+            animation: marqueeScroll linear infinite;
+            font-weight: 500;
+            color: #4a3f6b;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+            padding-right: 40px;
+        }
+        .marquee-content span { display: inline-block; padding-right: 50px; }
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-track::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 40px;
+            background: linear-gradient(to right, transparent, rgba(248, 249, 252, 0.9));
+            pointer-events: none;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 16px;
+            color: #3a3450;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        .section-title i { font-size: 1.2rem; background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .link-card {
+            display: block;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(139, 92, 246, 0.06);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .link-card:hover, .link-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg), 0 0 25px rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.25);
+        }
+        .link-card:hover::before { opacity: 1; }
+        .link-card:active { transform: scale(0.98); }
+        .card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.6rem;
+            height: 2.6rem;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(91, 141, 239, 0.08) 100%);
+        }
+        .card-icon i {
+            font-size: 1.75rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: transform 0.3s ease;
+        }
+        .link-card:hover .card-icon i { transform: scale(1.08); filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.5)); }
+        .card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; color: #2c2540; }
+        .card-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+        .card-tag {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 8px;
+            background: var(--purple-light);
+            color: #6b4fd4;
+            transition: var(--transition);
+        }
+        .link-card:hover .card-tag { background: #e8dffa; color: #5639c0; }
+        .card-arrow {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: var(--transition);
+            color: #8b5cf6;
+        }
+        .link-card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+            margin-top: 10px;
+        }
+        .footer .heart { color: #e74c8b; display: inline-block; animation: heartBeat 1.5s ease-in-out infinite; }
+        @keyframes heartBeat {
+            0%,100% { transform: scale(1); }
+            15% { transform: scale(1.25); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.18); }
+            60% { transform: scale(1); }
+        }
+        .footer a { color: #8b5cf6; text-decoration: none; font-weight: 500; transition: var(--transition); }
+        .footer a:hover { color: #5b8def; text-decoration: underline; }
+
+        /* 调试提示 */
+        .debug-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2540;
+            color: #f0eefc;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 999;
+            backdrop-filter: blur(12px);
+            background-color: rgba(44, 37, 64, 0.9);
+            border-left: 4px solid #8b5cf6;
+            box-shadow: var(--shadow-lg);
+            pointer-events: none;
+            font-family: var(--font-mono);
+        }
+        .debug-toast i { margin-right: 8px; color: #a78bfa; }
+
+        /* 调试编辑模态框 */
+        .modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s ease;
+        }
+        .modal-mask.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-container {
+            background: var(--card-bg);
+            max-width: 480px;
+            width: 90%;
+            border-radius: 28px;
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border: 1px solid rgba(139,92,246,0.2);
+            overflow: hidden;
+            animation: modalPop 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 20px 24px 8px 24px;
+            background: linear-gradient(135deg, rgba(139,92,246,0.05), rgba(91,141,239,0.05));
+            border-bottom: 1px solid rgba(139,92,246,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 1.3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: 0.2s;
+        }
+        .modal-close:hover { color: #8b5cf6; transform: scale(1.1); }
+        .modal-body {
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #4a3f6b;
+            letter-spacing: 0.02em;
+        }
+        .input-group input, .input-group textarea {
+            padding: 10px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(139,92,246,0.2);
+            background: var(--bg);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            outline: none;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+        }
+        .modal-footer {
+            padding: 12px 24px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .modal-btn {
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        .modal-btn-cancel {
+            background: #eef1f8;
+            color: #5a6c7d;
+        }
+        .modal-btn-save {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+        }
+        .modal-btn-save:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+        }
+
+        @media (max-width: 640px) {
+            .main-container { padding: 12px 14px 36px; }
+            .header { padding: 24px 10px 16px; }
+            .site-title { font-size: 1.6rem; }
+            .logo-icon { font-size: 42px; }
+            .logo-ring { width: 66px; height: 66px; }
+            .cards-grid { gap: 8px; }
+            .link-card { padding: 12px 10px; }
+            .card-icon { width: 2.2rem; height: 2.2rem; margin-bottom: 8px; }
+            .card-icon i { font-size: 1.4rem; }
+            .card-title { font-size: 0.88rem; }
+            .card-desc { font-size: 0.76rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="bg-orb orb-4"></div>
+    <div class="bg-orb orb-5"></div>
+    <div class="floating-dots">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-wrap" id="debugTriggerBtn">
+                <i class="fas fa-toolbox logo-icon"></i>
+                <div class="logo-ring"></div>
+            </div>
+            <h1 class="site-title">
+                <i class="fas fa-database"></i> 资源工坊 · 软件固件 <i class="fas fa-microchip"></i>
+            </h1>
+            <p class="site-subtitle">
+                <i class="fas fa-briefcase"></i> Android·Windows·Flash·效率工具集 <i class="fas fa-rocket"></i>
+            </p>
+        </header>
+
+        <div class="marquee-banner">
+            <span class="marquee-label"><i class="fas fa-comment-dots"></i> 资源快讯</span>
+            <div class="marquee-track">
+                <div class="marquee-content" id="marqueeContent"></div>
+            </div>
+        </div>
+
+        <section>
+            <h2 class="section-title"><i class="fas fa-tags"></i> 资源分类导航</h2>
+            <div class="cards-grid" id="cardsGrid"></div>
+        </section>
+
+        <footer class="footer">
+            <p>
+                <i class="fas fa-laptop-code"></i> Designed by @YeoChing 
+                <i class="fas fa-heart heart"></i> 持续更新 · 收藏永不迷路
+                <a href="#" target="_blank" rel="noopener"><i class="fas fa-box-archive"></i> 资源仓库</a>
+            </p>
+            <!-- 已删除“修改 linksData 数组即可自由添加/替换资源链接”字段 -->
+        </footer>
+    </div>
+
+    <!-- 调试模式下编辑模态框 -->
+    <div id="editModal" class="modal-mask">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-pen-fancy"></i> 编辑资源卡片</h3>
+                <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label><i class="fas fa-heading"></i> 标题</label>
+                    <input type="text" id="editTitle" placeholder="卡片标题">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-align-left"></i> 描述</label>
+                    <textarea id="editDesc" rows="2" placeholder="简要描述..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-link"></i> 链接地址</label>
+                    <input type="text" id="editUrl" placeholder="https:// 或 相对路径">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="cancelEditBtn">取消</button>
+                <button class="modal-btn modal-btn-save" id="saveEditBtn">保存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 卡片原始数据 (无表情符号标题)
+            const linksData = [
+                { title: "Android 应用合辑", url: "javascript:void(0);", desc: "精选绿色软件、效率APP、开源工具，提升移动生产力。", faIcon: "fab fa-android", tag: "热门推荐" },
+                { title: "Windows 软件 & 插件", url: "javascript:void(0);", desc: "装机必备神器、开发者插件、系统工具库，高效搬砖。", faIcon: "fab fa-windows", tag: "持续更新" },
+                { title: "刷机资源 (路由器/机顶盒)", url: "javascript:void(0);", desc: "OpenWrt / Padavan / CoreELEC / Android TV 固件+救砖教程。", faIcon: "fas fa-microchip", tag: "极客专区" },
+                { title: "Linux 常用工具箱", url: "javascript:void(0);", desc: "脚本工具、开发环境、服务器运维，待开发更多宝藏...", faIcon: "fab fa-linux", tag: "待开发" },
+                { title: "macOS 效率增强", url: "javascript:void(0);", desc: "Mac实用插件、自动化工具，生产力再加成 (筹备中)。", faIcon: "fab fa-apple", tag: "待开发" },
+                { title: "设计 / 办公资源库", url: "javascript:void(0);", desc: "UI素材、模板、文档处理工具，未来扩充更多内容。", faIcon: "fas fa-palette", tag: "待开发" }
+            ];
+
+            const slogans = [
+                "收藏从未停止，实践从现在开始！", "每一次刷机，都是全新的旅程",
+                "Android绿色软件，纯净体验无打扰", "Windows效率工具，让搬砖事半功倍",
+                "路由器刷机，解锁隐藏性能", "固件在手，天下我有！",
+                "每日更新最热资源，打工人必备", "工欲善其事，必先利其器",
+                "小众插件大集合，提升工作流", "资源仓库持续扩建中，欢迎收藏",
+                "代码与工具，创造无限可能", "机顶盒变身家庭娱乐中心",
+                "每一份资源都经过筛选，放心食用", "今天也是充满干货的一天"
+            ];
+
+            let debugMode = false;
+            let clickCount = 0;
+            let clickTimer = null;
+            let currentEditIndex = -1;
+            const modal = document.getElementById('editModal');
+            const editTitle = document.getElementById('editTitle');
+            const editDesc = document.getElementById('editDesc');
+            const editUrl = document.getElementById('editUrl');
+
+            function getRandomSlogan() {
+                const storageKey = 'res_tool_last_slogan';
+                const lastIndex = parseInt(localStorage.getItem(storageKey), 10);
+                let newIndex = 0;
+                if (slogans.length > 1) {
+                    do { newIndex = Math.floor(Math.random() * slogans.length); }
+                    while (newIndex === lastIndex);
+                }
+                localStorage.setItem(storageKey, newIndex);
+                return slogans[newIndex];
+            }
+
+            function renderMarquee() {
+                const slogan = getRandomSlogan();
+                const marqueeContent = document.getElementById('marqueeContent');
+                const repeatCount = 8;
+                let spans = '';
+                for (let i = 0; i < repeatCount; i++) spans += `<span>${slogan}</span>`;
+                marqueeContent.innerHTML = spans;
+                const baseSpeed = Math.max(20, slogan.length * 1.4 + 16);
+                marqueeContent.style.animationDuration = baseSpeed + 's';
+            }
+
+            function renderCards() {
+                const grid = document.getElementById('cardsGrid');
+                if (!linksData.length) {
+                    grid.innerHTML = `<div class="add-link-hint" style="grid-column:span2; background:var(--gradient-subtle);border-radius:var(--radius);padding:30px;text-align:center;"><i class="fas fa-exclamation-triangle"></i> 暂无资源卡片</div>`;
+                    return;
+                }
+                const html = linksData.map((link, idx) => `
+                    <a href="${link.url}" class="link-card" data-index="${idx}">
+                        <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
+                        <span class="card-icon"><i class="${link.faIcon}"></i></span>
+                        <div class="card-title">${escapeHtml(link.title)}</div>
+                        <div class="card-desc">${escapeHtml(link.desc)}</div>
+                        ${link.tag ? `<span class="card-tag">${escapeHtml(link.tag)}</span>` : ''}
+                    </a>
+                `).join('');
+                grid.innerHTML = html;
+            }
+
+            function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+            function showDebugMessage(msg) {
+                const existing = document.querySelector('.debug-toast');
+                if (existing) existing.remove();
+                const toast = document.createElement('div');
+                toast.className = 'debug-toast';
+                toast.innerHTML = `<i class="fas ${debugMode ? 'fa-toggle-on' : 'fa-toggle-off'}"></i> ${msg}`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove?.(), 2200);
+            }
+
+            function toggleDebugMode() {
+                debugMode = !debugMode;
+                showDebugMessage(debugMode ? '调试模式已开启 — 点击任意资源卡片可编辑标题/描述/链接' : '调试模式已关闭，卡片恢复正常跳转');
+            }
+
+            function openEditModal(index) {
+                if (!debugMode || index < 0) return false;
+                currentEditIndex = index;
+                const card = linksData[index];
+                editTitle.value = card.title;
+                editDesc.value = card.desc;
+                editUrl.value = card.url;
+                modal.classList.add('active');
+                return true;
+            }
+
+            function closeEditModal() {
+                modal.classList.remove('active');
+                currentEditIndex = -1;
+            }
+
+            function saveCardEdit() {
+                if (currentEditIndex === -1) return;
+                const newTitle = editTitle.value.trim();
+                const newDesc = editDesc.value.trim();
+                const newUrl = editUrl.value.trim();
+                if (newTitle === "") {
+                    showDebugMessage("标题不能为空，修改失败");
+                    return;
+                }
+                linksData[currentEditIndex].title = newTitle;
+                linksData[currentEditIndex].desc = newDesc || "暂无描述";
+                linksData[currentEditIndex].url = newUrl || "javascript:void(0)";
+                // 重新渲染卡片以更新UI
+                renderCards();
+                // 重新绑定卡片交互 (事件代理已存在，但为了安全重新挂接一次)
+                attachCardEvents();
+                showDebugMessage(`✅ 已更新卡片: ${newTitle.substring(0, 30)}`);
+                closeEditModal();
+            }
+
+            // 事件委托处理卡片点击 (调试/普通)
+            function attachCardEvents() {
+                const grid = document.getElementById('cardsGrid');
+                if (!grid) return;
+                // 移除旧监听避免重复，但直接覆盖即可, 使用新监听
+                grid.removeEventListener('click', gridClickHandler);
+                grid.addEventListener('click', gridClickHandler);
+            }
+
+            function gridClickHandler(e) {
+                const card = e.target.closest('.link-card');
+                if (!card) return;
+                const idx = card.getAttribute('data-index');
+                if (idx === null) return;
+                const index = parseInt(idx, 10);
+                
+                if (debugMode) {
+                    e.preventDefault();
+                    openEditModal(index);
+                } else {
+                    // 非调试模式，如果是无效链接则提示
+                    if (linksData[index].url === "javascript:void(0)") {
+                        e.preventDefault();
+                        alert('【提示】该资源分类正在筹备中，暂未配置实际链接。\n若需修改链接，请连续点击顶部工具箱图标7次开启调试模式进行编辑。');
+                    }
+                }
+            }
+
+            function setupDebugTrigger() {
+                const trigger = document.getElementById('debugTriggerBtn');
+                if (!trigger) return;
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clearTimeout(clickTimer);
+                    clickCount++;
+                    if (clickCount >= 7) {
+                        toggleDebugMode();
+                        clickCount = 0;
+                        if (clickTimer) clearTimeout(clickTimer);
+                    } else {
+                        clickTimer = setTimeout(() => { clickCount = 0; }, 500);
+                    }
+                });
+            }
+
+            function initModalEvents() {
+                document.getElementById('closeModalBtn')?.addEventListener('click', closeEditModal);
+                document.getElementById('cancelEditBtn')?.addEventListener('click', closeEditModal);
+                document.getElementById('saveEditBtn')?.addEventListener('click', saveCardEdit);
+                modal?.addEventListener('click', (e) => { if (e.target === modal) closeEditModal(); });
+            }
+
+            function init() {
+                renderMarquee();
+                renderCards();
+                setupDebugTrigger();
+                attachCardEvents();
+                initModalEvents();
+                console.log('%c🛠️ 资源工坊 | 调试模式: 连续点击顶部工具箱7次，即可直接修改卡片标题、描述和链接', 'color: #8b5cf6; font-size: 13px;');
+            }
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
+    </script>
+</body>
+</html>
