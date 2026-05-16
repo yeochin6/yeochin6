@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <title>加班记录 · 打工人专用</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary: #5866ef;
@@ -12,7 +14,7 @@
             --warning: #ffb902;
             --bg: #f7faff;
             --header-gradient: linear-gradient(90deg, #5668dd 0%, #a97df8 100%);
-            --radius: 18px;
+            --radius: 60px;
             --shadow: 0 4px 24px 0 #728dff33;
             --cell-bg: #eef3fb;
             --cell-holiday: #f8f2ff;
@@ -35,34 +37,52 @@
             color: #24284f;
             position: relative;
         }
-        header {
+        /* 顶部一体胶囊 */
+        .top-capsule {
             background: var(--header-gradient);
-            color: #fff;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.15);
-            padding: 14px 26px;
-            text-align: center;
-            font-size: var(--headline);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 28px rgba(86,104,221,0.35), 0 4px 12px rgba(0,0,0,0.08), inset 0 2px 6px rgba(255,255,255,0.35);
+            margin: 10px 16px 18px 16px;
             position: sticky;
             top: 12px;
             z-index: 10;
-            border-radius: 60px;
-            box-shadow: 0 10px 28px rgba(86,104,221,0.35), 0 4px 12px rgba(0,0,0,0.08), inset 0 2px 6px rgba(255,255,255,0.35);
-            letter-spacing: .10em;
-            margin: 10px 16px 18px 16px;
-            user-select: none;
+            display: flex;
+            align-items: center;
             overflow: hidden;
-            white-space: nowrap;
-            touch-action: manipulation;
             border: 1px solid rgba(255,255,255,0.25);
         }
-        header marquee {
-            font-size: inherit;
+        .inner-small {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 8px 16px;
+            margin: 6px 0 6px 8px;
             font-weight: bold;
-            letter-spacing: inherit;
-            display: inline-block;
-            width: 100%;
+            font-size: 1.1em;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             white-space: nowrap;
-            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .inner-small i { font-size: 0.9em; }
+        .marquee-container {
+            flex: 1;
+            overflow: hidden;
+            padding: 12px 8px;
+        }
+        .marquee-container marquee {
+            font-size: var(--headline);
+            font-weight: bold;
+            letter-spacing: .10em;
+            color: #fff;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
         }
         main {
             max-width: 525px;
@@ -71,6 +91,7 @@
         }
         .progress-area {
             margin-bottom: 16px;
+            position: relative;
         }
         .period-label {
             color: #4d60ad;
@@ -103,15 +124,14 @@
             background: var(--nav-btn-active);
             box-shadow: 0 4px 10px rgba(88,102,239,0.15);
         }
-        .period-nav button:active {
-            transform: scale(0.97);
-        }
+        .period-nav button:active { transform: scale(0.97); }
         .progress-bg {
+            position: relative;
             width: 100%;
             height: 14px;
             background: var(--progress-bg);
             border-radius: 8px;
-            overflow: hidden;
+            overflow: visible;
             margin-bottom: 3px;
         }
         .progress-inner {
@@ -121,18 +141,30 @@
             transition: width 0.8s cubic-bezier(0.7, 0, 0.3, 1);
             border-radius: 8px;
             box-shadow: 0 2px 8px #7275bd2a;
+            position: relative;
+        }
+        .progress-icon {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #ffffff;
+            text-shadow: 0 0 6px rgba(86,104,221,0.8), 0 0 3px #00000055;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            pointer-events: none;
+            z-index: 2;
+            transition: left 0.8s cubic-bezier(0.7, 0, 0.3, 1);
         }
         .calendar {
             background: #fff;
-            border-radius: var(--radius);
+            border-radius: 18px;
             padding: var(--block-padding) 4px 12px 4px;
             box-shadow: var(--shadow);
             margin-bottom: 18px;
             overflow-x: auto;
             touch-action: manipulation;
         }
-        .calendar-header,
-        .calendar-row {
+        .calendar-header, .calendar-row {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             align-items: center;
@@ -143,7 +175,6 @@
             font-size: 1em;
             text-align: center;
             padding: 2px 0;
-            user-select: none;
         }
         .calendar-cell {
             min-width: 38px;
@@ -163,14 +194,9 @@
             border: 2.2px solid transparent;
             overflow: hidden;
             user-select: none;
-            -webkit-user-select: none;
         }
-        .calendar-cell.today {
-            border: 2.2px solid var(--primary);
-        }
-        .calendar-cell[data-weekend="1"]:not([data-pubholiday="1"]) {
-            background: var(--cell-holiday);
-        }
+        .calendar-cell.today { border: 2.2px solid var(--primary); }
+        .calendar-cell[data-weekend="1"]:not([data-pubholiday="1"]) { background: var(--cell-holiday); }
         .calendar-cell[data-pubholiday="1"] {
             background: var(--cell-pubholiday);
             border-color: #f5cfa0;
@@ -185,29 +211,6 @@
             font-size: 1.05em;
             position: relative;
         }
-        .calendar-cell[data-pubholiday="1"] .cell-date::after {
-            content: '★';
-            font-size: 0.5em;
-            color: var(--pubholiday-accent);
-            position: absolute;
-            top: -7px;
-            right: -12px;
-            line-height: 1;
-        }
-        .calendar-cell.custom-holiday .cell-date::after {
-            content: '✧';
-            font-size: 0.5em;
-            color: #a0a0c0;
-            position: absolute;
-            top: -7px;
-            right: -12px;
-            line-height: 1;
-            opacity: 0.8;
-        }
-        .calendar-cell[data-pubholiday="1"].custom-holiday .cell-date::after {
-            content: '★';
-            color: var(--pubholiday-accent);
-        }
         .cell-ot-bar-bg {
             margin-top: 0.5em;
             width: 82%;
@@ -215,33 +218,74 @@
             background: #e5e5ee;
             border-radius: 7px;
             overflow: hidden;
-            position: relative;
         }
         .cell-ot-bar {
             height: 100%;
-            border-radius: 7px;
             transition: width .25s;
             background: var(--overtime-bar);
             box-shadow: 0 1px 4px #5668dd35;
             min-width: 1.5px;
         }
-        .cell-ot-bar.warn {
-            background: var(--warning);
-        }
-        .cell-ot-bar.full {
-            background: var(--danger);
-        }
+        .cell-ot-bar.warn { background: var(--warning); }
+        .cell-ot-bar.full { background: var(--danger); }
         .cell-ot-num {
             margin: .18em 0 0 0;
             font-size: .97em;
             color: var(--primary);
             font-weight: bold;
-            user-select: none;
-            pointer-events: none;
         }
-        .cell-blank {
-            background: none;
-            pointer-events: none;
+        .cell-blank { background: none; pointer-events: none; }
+
+        /* 三列统计卡片 */
+        .stats-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        .stat-card {
+            background: #f8faff;
+            border-radius: 20px;
+            padding: 10px 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: transform 0.1s;
+        }
+        .stat-card i {
+            font-size: 1.6em;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .stat-card .stat-label {
+            font-size: 0.85em;
+            font-weight: 500;
+            color: #6c7bbd;
+            margin-bottom: 4px;
+        }
+        .stat-card .stat-hours {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+        .stat-card .stat-multiplier {
+            font-size: 0.75em;
+            color: #a0a9cf;
+        }
+        .total-row-salary {
+            border-top: 1.5px dashed #dde3f8;
+            padding-top: 12px;
+            margin-top: 4px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .summary {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: var(--block-padding) 10px 10px 10px;
+            margin-bottom: 12px;
         }
         .modal-mask {
             position: fixed;
@@ -301,6 +345,8 @@
         .modal .modal-btns {
             display: flex;
             gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .modal button {
             padding: .55em 1.7em;
@@ -309,40 +355,29 @@
             font-size: 1em;
             font-weight: 500;
             cursor: pointer;
-            box-shadow: 0 3px 18px #acb5fa18;
             background: var(--primary);
             color: #fff;
             transition: background .19s;
         }
-        .modal button.cancel {
-            background: #b8bde4;
-            color: #fff;
+        .modal button.cancel { background: #b8bde4; }
+        .modal .option-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            margin: 10px 0;
         }
-        .summary {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            font-size: 1.09em;
-            padding: var(--block-padding) 10px 10px 10px;
-            margin-bottom: 12px;
-            line-height: 2.16;
-            text-align: center;
-        }
-        .summary strong {
+        .modal .option-buttons button {
+            background: #f0f4fe;
             color: var(--primary);
-            font-size: 1.21em;
+            border: 1px solid #b3d0f8;
+            box-shadow: none;
+            font-weight: normal;
         }
-        .summary .pub-row strong {
-            color: var(--pubholiday-accent);
-        }
-        .summary .total-row {
-            border-top: 1.5px dashed #dde3f8;
-            margin-top: 6px;
-            padding-top: 8px;
-        }
+        .modal .option-buttons button:hover { background: #e0e8fc; }
         .chart-container {
             background: #fff;
-            border-radius: var(--radius);
+            border-radius: 18px;
             box-shadow: var(--shadow);
             padding: 14px 10px 12px 10px;
             margin-bottom: 18px;
@@ -371,16 +406,6 @@
             padding: 8px 12px;
             color: #3b4570;
         }
-        .weekly-comment {
-            font-weight: 600;
-            background: #fff0db;
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 40px;
-            margin-top: 10px;
-            color: #b45f1b;
-            font-size: 0.9em;
-        }
         .input-group {
             display: flex;
             align-items: center;
@@ -408,15 +433,12 @@
             border: none;
             padding: 7px 18px;
             font-weight: 500;
-            box-shadow: 0 1px 2px #4442bc14;
             cursor: pointer;
             margin-left: 6px;
             font-size: 1em;
             transition: background 0.2s;
         }
-        .input-group button:hover {
-            background: var(--primary);
-        }
+        .input-group button:hover { background: var(--primary); }
         .toast {
             position: fixed;
             top: 0; left: 50%;
@@ -432,9 +454,7 @@
             pointer-events: none;
             box-shadow: 0 4px 12px #00000022;
         }
-        .toast.show {
-            opacity: 1; top: 10px;
-        }
+        .toast.show { opacity: 1; top: 10px; }
         .secret-gear {
             position: fixed;
             bottom: 16px; right: 16px;
@@ -450,7 +470,6 @@
             box-shadow: 0 2px 8px #a6b0e433;
             z-index: 900;
             transition: background 0.2s;
-            user-select: none;
         }
         .secret-gear:hover { background: #dcdef8; }
         .secret-menu {
@@ -474,55 +493,75 @@
             color: #24284f;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.15s;
             width: 100%;
         }
         .secret-menu button:hover { background: #eef3fb; }
         .secret-file-input { display: none; }
+        .fa-icon-mr { margin-right: 4px; }
+        .fa-icon-ml { margin-left: 4px; }
         @media (max-width:640px) {
             main { padding: 2px; }
             .calendar, .summary, .chart-container { padding: 10px 2px; }
-            .calendar-cell { min-width: 17px; font-size: .94em; }
-            header { font-size: 1.01em; margin: 6px 10px 12px 10px; padding: 12px 16px; }
+            .calendar-cell { min-width: 17px; font-size: .94em; height: 44px; }
+            .inner-small { padding: 4px 10px; font-size: 0.85em; }
+            .marquee-container marquee { font-size: 1em; }
+            .top-capsule { margin: 6px 10px 12px 10px; }
             .modal { padding: 20px 6vw; }
             .period-nav { gap: 6px; }
             .period-nav button { padding: 5px 10px; font-size: 0.82em; }
             canvas#weekly-chart { min-height: 200px; }
+            .progress-icon { font-size: 16px; }
+            .stats-columns { gap: 6px; }
+            .stat-card .stat-hours { font-size: 1.3em; }
+            .stat-card i { font-size: 1.3em; }
         }
     </style>
 </head>
 <body>
-    <header id="main-header">
-        <marquee id="header-slogan" direction="left" scrollamount="4" behavior="scroll" style="width:100%; white-space:nowrap;"></marquee>
-    </header>
+    <div class="top-capsule">
+        <div class="inner-small" id="small-capsule">
+            <i class="fas fa-hourglass-half"></i> <span id="total-hours-display">0h</span>
+        </div>
+        <div class="marquee-container">
+            <marquee id="header-slogan" direction="left" scrollamount="4" behavior="scroll"></marquee>
+        </div>
+    </div>
+
     <main>
         <div class="progress-area">
             <div class="period-label" id="period-label"></div>
             <div class="period-nav">
-                <button id="prev-period-btn" title="查看上一考勤周期">◀ 前一周期</button>
-                <button id="today-period-btn" title="回到当前考勤周期">📍 今天</button>
-                <button id="next-period-btn" title="查看下一考勤周期">后一周期 ▶</button>
+                <button id="prev-period-btn"><i class="fas fa-chevron-left fa-icon-mr"></i>前一周期</button>
+                <button id="today-period-btn"><i class="fas fa-location-dot fa-icon-mr"></i>今天</button>
+                <button id="next-period-btn">后一周期<i class="fas fa-chevron-right fa-icon-ml"></i></button>
             </div>
-            <div class="progress-bg"><div class="progress-inner" id="progress-inner"></div></div>
+            <div class="progress-bg" id="progress-bg">
+                <div class="progress-inner" id="progress-inner"></div>
+                <i id="progress-icon" class="fas fa-person-walking progress-icon"></i>
+            </div>
         </div>
         <section class="calendar" id="calendar"></section>
-        <section class="summary" id="summary"></section>
         
-        <!-- 柱状图卡片：每周加班时长 -->
+        <section class="summary" id="summary">
+            <div class="stats-columns" id="stats-columns"></div>
+            <div class="total-row-salary" id="total-salary"></div>
+        </section>
+        
         <div class="chart-container" id="chart-container">
-            <div class="chart-title">📊 每周加班时长同比增长</div>
+            <div class="chart-title"><i class="fas fa-chart-simple fa-icon-mr"></i>每周加班时长环比趋势</div>
             <canvas id="weekly-chart" width="500" height="240" style="width:100%; height:auto; max-width:500px; aspect-ratio:500/240"></canvas>
             <div class="weekly-stats" id="weekly-stats">
                 <span id="weekly-compare-text">加载中...</span>
-                <div class="weekly-comment" id="weekly-humor"></div>
             </div>
         </div>
 
         <form class="input-group" id="wage-form" autocomplete="off">
-            <label for="hourly-wage">时薪(元):</label>
+            <label for="hourly-wage"><i class="fas fa-coins fa-icon-mr"></i>时薪(元):</label>
             <input type="number" min="1" step="1" id="hourly-wage" required>
             <button type="submit">确定</button>
         </form>
+        
+        <!-- 加班录入弹窗 -->
         <div class="modal-mask" id="modal-mask">
             <div class="modal" id="modal">
                 <div><label id="modal-date-label"></label></div>
@@ -533,45 +572,57 @@
                 </div>
             </div>
         </div>
+
+        <!-- 自定义假日三按钮弹窗 -->
+        <div class="modal-mask" id="holiday-modal-mask">
+            <div class="modal" id="holiday-modal">
+                <div><label id="holiday-modal-label"></label></div>
+                <div class="option-buttons" id="holiday-option-buttons"></div>
+                <div class="modal-btns">
+                    <button type="button" class="cancel" id="holiday-modal-cancel">关闭</button>
+                </div>
+            </div>
+        </div>
         <div class="toast" id="toast"></div>
     </main>
 
-    <div class="secret-gear" id="secret-gear" title="数据工具">⚜️</div>
+    <div class="secret-gear" id="secret-gear" title="数据工具"><i class="fas fa-cog"></i></div>
     <div class="secret-menu" id="secret-menu">
-        <button id="backup-btn">📥 备份数据</button>
-        <button id="restore-btn">📤 恢复数据</button>
+        <button id="backup-btn"><i class="fas fa-download fa-icon-mr"></i>备份数据</button>
+        <button id="restore-btn"><i class="fas fa-upload fa-icon-mr"></i>恢复数据</button>
     </div>
     <input type="file" id="secret-file-input" class="secret-file-input" accept=".json">
 
     <script>
-        // ========= 标语库 =========
-        const slogans = [
-            "今天也是努力搬砖的一天！","加班使我快乐，薪资让我心安。","打工路上，无问东西。","科技让生活更美好，钱包也更鼓。",
-            "向钱看，向厚赚！","平凡岗位，闪耀青春。","努力从未被辜负，加班也得有度。","代码敲不完，薪水继续涨。",
-            "工资不够，时间来凑。","打工人的世界，只有干与更干！","今天搬砖不狠，明天地位不稳！","上班精神差，来杯咖啡吧 ☕",
-            "打工是为了早日退休！","摸鱼一时爽，一直摸鱼一直爽","别跟我谈理想，我的理想是不上班","只要班上得够快，寂寞就追不上我",
-            "明天还得来...算了不想了","工资到手，活儿到手","不是在打工，就是在去打工的路上！","卷不过就躺，躺不住就卷！",
-            "打工人，打工魂，打工都是人上人！","今天又是元气满满的一天！（骗人的）","宇宙的尽头是铁岭，人生的尽头是上班……",
-            "生活不止眼前的苟且，还有读不完的文档。","别人上班是赚钱，我上班是赚气！","周一到周五，痛苦面具戴起来。","周六周日，元气恢复中...",
-            "周五下午的我，已经在另一个世界了。","老板画饼我吃饼，大家都是饼中人。","工位是我的牢房，电脑是我的镣铐。",
-            "下班不积极，思想有问题。","今天的工作已经做完了吗？没有。但我饿了！","打工可能会少活十年，不打工你连命都不想要。",
-            "世界上最远的距离是周一到周五。","我爱工作，工作使我快乐（假的）…"
-        ];
-        function randomSlogan() { document.getElementById('header-slogan').innerText = slogans[Math.floor(Math.random() * slogans.length)]; }
-        randomSlogan();
-
-        // ========= 国定假日 =========
-        const PUBLIC_HOLIDAYS = {
+        // ========= 国定假日（预置）及用户自定义国假 =========
+        const PRESET_PUBLIC_HOLIDAYS = {
             2025: ['2025-01-01','2025-01-28','2025-01-29','2025-01-30','2025-04-05','2025-05-01','2025-06-19','2025-09-27','2025-10-01','2025-10-02','2025-10-03'],
             2026: ['2026-01-01','2026-02-17','2026-02-18','2026-02-19','2026-04-05','2026-05-01','2026-06-19','2026-09-27','2026-10-01','2026-10-02','2026-10-03'],
             2027: ['2027-01-01','2027-02-06','2027-02-07','2027-02-08','2027-04-05','2027-05-01','2027-06-09','2027-09-16','2027-10-01','2027-10-02','2027-10-03']
         };
+        let userPublicHolidays = new Set();
+        const USER_PUBLIC_KEY = 'userPublicHolidays';
+        function loadUserPublicHolidays() {
+            try { const arr = JSON.parse(localStorage.getItem(USER_PUBLIC_KEY) || '[]'); userPublicHolidays = new Set(arr); } catch { userPublicHolidays = new Set(); }
+        }
+        function saveUserPublicHolidays() { localStorage.setItem(USER_PUBLIC_KEY, JSON.stringify([...userPublicHolidays])); }
+        loadUserPublicHolidays();
+
         function isPublicHoliday(date) {
-            const holidays = PUBLIC_HOLIDAYS[date.getFullYear()];
-            return holidays ? holidays.includes(formatDateKey(date)) : false;
+            const key = formatDateKey(date);
+            if (userPublicHolidays.has(key)) return true;
+            const holidays = PRESET_PUBLIC_HOLIDAYS[date.getFullYear()];
+            return holidays ? holidays.includes(key) : false;
         }
 
-        // ========= 考勤周期 =========
+        const CUSTOM_HOLIDAYS_KEY = 'customHolidays';
+        function getCustomHolidaysSet() {
+            try { return new Set(JSON.parse(localStorage.getItem(CUSTOM_HOLIDAYS_KEY) || '[]')); } catch { return new Set(); }
+        }
+        function saveCustomHolidaysSet(set) { localStorage.setItem(CUSTOM_HOLIDAYS_KEY, JSON.stringify([...set])); }
+        let customHolidays = getCustomHolidaysSet();
+
+        // ========= 周期相关 =========
         const PERIOD_DAYS = 31;
         function getCurrentPeriod(date = new Date()) {
             let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate();
@@ -593,7 +644,7 @@
             return [date.getFullYear(), String(date.getMonth()+1).padStart(2,'0'), String(date.getDate()).padStart(2,'0')].join('-');
         }
 
-        // ========= 持久化 =========
+        // ========= 数据持久化 =========
         const STORAGE_KEY = 'overtime_v2';
         function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
         function loadData() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
@@ -601,41 +652,26 @@
         function setWage(w) { localStorage.setItem(WAGE_KEY, w); }
         function getWage() { const w = parseInt(localStorage.getItem(WAGE_KEY)); return w > 0 ? w : 30; }
 
-        const CUSTOM_HOLIDAYS_KEY = 'customHolidays';
-        function getCustomHolidaysSet() {
-            try { return new Set(JSON.parse(localStorage.getItem(CUSTOM_HOLIDAYS_KEY) || '[]')); } catch { return new Set(); }
-        }
-        function saveCustomHolidaysSet(set) { localStorage.setItem(CUSTOM_HOLIDAYS_KEY, JSON.stringify([...set])); }
-        let customHolidays = getCustomHolidaysSet();
-
-        function isNearHoliday(date) {
-            if (isWeekend(date) || isPublicHoliday(date)) return false;
-            const oneDay = 86400000;
-            for (let i = 1; i <= 5; i++) {
-                if (isWeekend(new Date(date.getTime() - i * oneDay)) || isPublicHoliday(new Date(date.getTime() - i * oneDay))) return true;
-                if (isWeekend(new Date(date.getTime() + i * oneDay)) || isPublicHoliday(new Date(date.getTime() + i * oneDay))) return true;
-            }
-            return false;
-        }
-
-        // ========= 标题连击彩蛋 =========
-        let holidayMarkEnabled = false, dataToolsVisible = false;
-        const header = document.getElementById('main-header');
+        // ========= 调试模式 =========
+        let debugMode = false;
+        let dataToolsVisible = false;
+        const topCapsule = document.querySelector('.top-capsule');
         let clickCount = 0, lastClickTime = 0;
         let secondClickCount = 0, secondLastClickTime = 0;
         const FIRST_NEEDED = 7, SECOND_NEEDED = 5, CLICK_WINDOW = 2500;
-        header.addEventListener('pointerdown', function(e) {
-            if (e.target.closest('#main-header') !== header) return;
+        topCapsule.addEventListener('pointerdown', function(e) {
             const now = Date.now();
-            if (!holidayMarkEnabled) {
+            if (!debugMode) {
                 if (now - lastClickTime > CLICK_WINDOW) clickCount = 1;
                 else clickCount++;
                 lastClickTime = now;
                 if (clickCount >= FIRST_NEEDED) {
-                    holidayMarkEnabled = true;
+                    debugMode = true;
                     clickCount = 0;
-                    showToast('🔧 高级设置已就绪');
+                    showToast('<i class="fas fa-wrench fa-icon-mr"></i>调试模式已开启，长按日期可自定义假日，加班无上限');
+                    document.getElementById('secret-gear').style.display = 'flex';
                     e.preventDefault();
+                    render();
                 }
                 return;
             }
@@ -646,26 +682,26 @@
                 if (secondClickCount >= SECOND_NEEDED) {
                     dataToolsVisible = true;
                     secondClickCount = 0;
-                    showToast('📦 数据工具已就绪');
-                    document.getElementById('secret-gear').style.display = 'flex';
+                    showToast('<i class="fas fa-box fa-icon-mr"></i>数据工具已就绪');
                     e.preventDefault();
                 }
             }
         });
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            toast.textContent = msg;
+            toast.innerHTML = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ========= 齿轮备份恢复 =========
+        // ========= 备份恢复 =========
         const gear = document.getElementById('secret-gear'), menu = document.getElementById('secret-menu'), fileInput = document.getElementById('secret-file-input');
         gear.addEventListener('click', e => { e.stopPropagation(); menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex'; });
         document.addEventListener('click', () => { menu.style.display = 'none'; });
         menu.addEventListener('click', e => e.stopPropagation());
         document.getElementById('backup-btn').addEventListener('click', () => {
-            const data = { overtime: loadData(), customHolidays: [...getCustomHolidaysSet()], wage: getWage() };
+            const data = { overtime: loadData(), customHolidays: [...getCustomHolidaysSet()], userPublicHolidays: [...userPublicHolidays], wage: getWage() };
             const json = JSON.stringify(data, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const a = document.createElement('a');
@@ -673,7 +709,7 @@
             a.href = URL.createObjectURL(blob);
             a.click();
             URL.revokeObjectURL(a.href);
-            showToast('✅ 数据已备份');
+            showToast('<i class="fas fa-check-circle fa-icon-mr"></i>数据已备份');
             menu.style.display = 'none';
         });
         document.getElementById('restore-btn').addEventListener('click', () => { fileInput.click(); menu.style.display = 'none'; });
@@ -686,8 +722,9 @@
                     const backup = JSON.parse(ev.target.result);
                     if (backup.overtime) saveData(backup.overtime);
                     if (backup.customHolidays) saveCustomHolidaysSet(new Set(backup.customHolidays));
+                    if (backup.userPublicHolidays) { userPublicHolidays = new Set(backup.userPublicHolidays); saveUserPublicHolidays(); }
                     if (typeof backup.wage === 'number' && backup.wage > 0) setWage(backup.wage);
-                    showToast('✅ 数据已恢复');
+                    showToast('<i class="fas fa-check-circle fa-icon-mr"></i>数据已恢复');
                     setTimeout(() => location.reload(), 500);
                 } catch { alert('文件格式不正确'); }
             };
@@ -695,7 +732,7 @@
             fileInput.value = '';
         });
 
-        // 周期切换逻辑
+        // ========= 周期切换 =========
         let displayPeriod = getCurrentPeriod();
         function goToPeriod(startDate) {
             const endDate = new Date(startDate);
@@ -717,49 +754,91 @@
         document.getElementById('next-period-btn').addEventListener('click', () => goToPeriod(getNextPeriodStart(displayPeriod.start)));
         document.getElementById('today-period-btn').addEventListener('click', () => { displayPeriod = getCurrentPeriod(); render(); });
 
-        // 长按假日逻辑 (保留)
+        // ========= 长按菜单（调试模式） =========
         let longPressTimer = null, longPressStartPos = { x:0, y:0 };
         const LONG_PRESS_DURATION = 600, MOVE_THRESHOLD = 10;
-        let preventNextClickUntil = 0;
+        let pendingLongPressDateKey = null;
 
         function onPointerDown(e) {
-            if (!holidayMarkEnabled) return;
+            if (!debugMode) return;
             const cell = e.target.closest('.calendar-cell');
             if (!cell || cell.classList.contains('cell-blank')) return;
             const dateKey = cell.dataset.datekey;
             if (!dateKey) return;
-            const date = new Date(dateKey + 'T00:00:00');
-            if (!isNearHoliday(date) && !customHolidays.has(dateKey)) return;
-            if (isPublicHoliday(date) || isWeekend(date)) return;
+            pendingLongPressDateKey = dateKey;
             longPressStartPos = { x: e.clientX, y: e.clientY };
             longPressTimer = setTimeout(() => {
-                if (customHolidays.has(dateKey)) {
-                    if (confirm('取消将该日计为假日（恢复普通工作日）？')) {
-                        customHolidays.delete(dateKey);
-                        saveCustomHolidaysSet(customHolidays);
-                        render(); showToast('已恢复为工作日');
-                    }
-                } else {
-                    if (confirm('将该日计为假日（2倍）？')) {
-                        customHolidays.add(dateKey);
-                        saveCustomHolidaysSet(customHolidays);
-                        render(); showToast('已设为假日（2倍）');
-                    }
-                }
+                if (pendingLongPressDateKey) { showHolidayModal(pendingLongPressDateKey); pendingLongPressDateKey = null; }
                 longPressTimer = null;
             }, LONG_PRESS_DURATION);
         }
-        function onPointerUp() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } }
-        function onPointerMove(e) { if (longPressTimer && (Math.abs(e.clientX - longPressStartPos.x) > MOVE_THRESHOLD || Math.abs(e.clientY - longPressStartPos.y) > MOVE_THRESHOLD)) { clearTimeout(longPressTimer); longPressTimer = null; } }
-        function cancelLongPress() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } }
+        function onPointerUp() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; pendingLongPressDateKey = null; } }
+        function onPointerMove(e) {
+            if (longPressTimer && (Math.abs(e.clientX - longPressStartPos.x) > MOVE_THRESHOLD || Math.abs(e.clientY - longPressStartPos.y) > MOVE_THRESHOLD)) {
+                clearTimeout(longPressTimer); longPressTimer = null; pendingLongPressDateKey = null;
+            }
+        }
 
-        // ========= 核心：每周加班时长柱状图（修正同比逻辑，基于已结束周）=========
+        function showHolidayModal(dateKey) {
+            const date = new Date(dateKey + 'T00:00:00');
+            const isPub = isPublicHoliday(date);
+            const isCustom = customHolidays.has(dateKey);
+            let currentType = "";
+            if (isPub) currentType = "国假（3倍）";
+            else if (isCustom) currentType = "自定义假日（2倍）";
+            else if (isWeekend(date)) currentType = "周末（2倍）";
+            else currentType = "普通工作日（1.5倍）";
+            
+            const modal = document.getElementById('holiday-modal-mask');
+            const label = document.getElementById('holiday-modal-label');
+            label.innerHTML = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}<br>当前：${currentType}`;
+            const btnsDiv = document.getElementById('holiday-option-buttons');
+            btnsDiv.innerHTML = `
+                <button id="holiday-custom-btn"><i class="fa-regular fa-sun"></i> 设为自定义假日（2倍）</button>
+                <button id="holiday-public-btn"><i class="fas fa-landmark"></i> 设为国假（3倍）</button>
+                <button id="holiday-reset-btn"><i class="fa-regular fa-calendar"></i> 恢复普通工作日</button>
+            `;
+            modal.style.display = 'flex';
+            
+            const customBtn = document.getElementById('holiday-custom-btn');
+            const publicBtn = document.getElementById('holiday-public-btn');
+            const resetBtn = document.getElementById('holiday-reset-btn');
+            const closeBtn = document.getElementById('holiday-modal-cancel');
+            const closeModal = () => { modal.style.display = 'none'; };
+            customBtn.onclick = () => {
+                if (isPublicHoliday(date)) userPublicHolidays.delete(dateKey);
+                customHolidays.add(dateKey);
+                saveCustomHolidaysSet(customHolidays);
+                saveUserPublicHolidays();
+                showToast(`已将 ${dateKey} 设为自定义假日（2倍）`);
+                closeModal(); render();
+            };
+            publicBtn.onclick = () => {
+                if (customHolidays.has(dateKey)) { customHolidays.delete(dateKey); saveCustomHolidaysSet(customHolidays); }
+                userPublicHolidays.add(dateKey);
+                saveUserPublicHolidays();
+                showToast(`已将 ${dateKey} 设为国假（3倍）`);
+                closeModal(); render();
+            };
+            resetBtn.onclick = () => {
+                let changed = false;
+                if (userPublicHolidays.has(dateKey)) { userPublicHolidays.delete(dateKey); saveUserPublicHolidays(); changed = true; }
+                if (customHolidays.has(dateKey)) { customHolidays.delete(dateKey); saveCustomHolidaysSet(customHolidays); changed = true; }
+                if (changed) showToast(`已将 ${dateKey} 恢复为普通工作日`);
+                else showToast(`${dateKey} 本来就是普通工作日`);
+                closeModal(); render();
+            };
+            closeBtn.onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+        }
+
+        // ========= 每周加班柱状图 =========
         function computeWeeklyHours(startDate, endDate) {
             const days = getDaysArray(startDate, endDate);
             const overtimeMap = loadData();
-            const weeksMap = new Map(); // key: 周一日期字符串 -> { label, hours, start, end }
+            const weeksMap = new Map();
             for (let d of days) {
-                const dayOfWeek = d.getDay(); // 0周日
+                const dayOfWeek = d.getDay();
                 const monday = new Date(d);
                 const diff = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
                 monday.setDate(d.getDate() + diff);
@@ -781,40 +860,20 @@
             return weeks;
         }
 
-        function getHumorousComment(changePercent) {
-            if (isNaN(changePercent)) return "✨ 摸鱼躺平，岁月静好 ✨";
-            if (changePercent > 30) return "🔥 爆肝预警！下周请多喝枸杞 🔥";
-            if (changePercent > 10) return "⚠️ 奋斗逼上线，注意身体 ⚠️";
-            if (changePercent > 0) return "📈 稳中带卷，建议周末晒个太阳 🌞";
-            if (changePercent === 0) return "🐢 加班量和上周一模一样，稳如老狗 🐢";
-            if (changePercent < -30) return "🎉 功德圆满！下周可以合理摸鱼啦 🎉";
-            if (changePercent < -10) return "🍃 效率飞升，加班锐减，赞！ 🍃";
-            return "🍵 劳逸结合，打工人的自我修养 🍵";
-        }
-
         function drawWeeklyChart() {
             const canvas = document.getElementById('weekly-chart');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             const weeksData = computeWeeklyHours(displayPeriod.start, displayPeriod.end);
-            
-            // 获取今天（清除时间部分，便于比较日期）
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
-            // 筛选出已经结束的周（周日 <= 今天）
             const historyWeeks = weeksData.filter(w => w.end <= today);
-            // 最近的已结束周（历史中最后一周）及其前一周
-            let recentWeek = null;
-            let prevWeek = null;
+            let recentWeek = null, prevWeek = null;
             if (historyWeeks.length >= 1) {
                 recentWeek = historyWeeks[historyWeeks.length - 1];
-                if (historyWeeks.length >= 2) {
-                    prevWeek = historyWeeks[historyWeeks.length - 2];
-                }
+                if (historyWeeks.length >= 2) prevWeek = historyWeeks[historyWeeks.length - 2];
             }
             
-            // 绘制柱状图（显示所有周，含未来周）
             if (!weeksData.length) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.font = '13px sans-serif';
@@ -822,7 +881,6 @@
                 ctx.textAlign = 'center';
                 ctx.fillText('📭 当前周期暂无加班记录', canvas.width/2, canvas.height/2);
                 document.getElementById('weekly-compare-text').innerHTML = '暂无周数据';
-                document.getElementById('weekly-humor').innerHTML = '🥱 加班为0，快乐加倍';
                 return;
             }
             
@@ -855,50 +913,102 @@
                 ctx.fillText(h.toFixed(1)+'h', x + barWidth/2, y-3);
             }
             
-            // 同比分析（仅基于已结束周，避免未来周干扰）
             let compareHtml = '';
-            let humorTxt = '';
             if (recentWeek) {
                 if (prevWeek) {
                     const diff = recentWeek.hours - prevWeek.hours;
                     let percent = 0;
                     if (prevWeek.hours > 0) percent = (diff / prevWeek.hours) * 100;
                     else if (recentWeek.hours > 0) percent = 100;
-                    const symbol = diff > 0 ? '📈 +' : (diff < 0 ? '📉 ' : '➖ ');
+                    const symbol = diff > 0 ? '<i class="fas fa-arrow-up"></i> ' : (diff < 0 ? '<i class="fas fa-arrow-down"></i> ' : '<i class="fas fa-equals"></i> ');
                     const absPercent = Math.abs(percent).toFixed(1);
-                    compareHtml = `📅 结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h，同比前周（${prevWeek.label}） ${symbol}${diff !==0 ? Math.abs(diff).toFixed(1)+'h' : '持平'} ${diff !==0 ? `(${symbol}${absPercent}%)` : ''}`;
-                    humorTxt = getHumorousComment(percent);
+                    compareHtml = `<i class="fas fa-calendar-week"></i> 结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h，同比前周（${prevWeek.label}） ${symbol}${diff !==0 ? Math.abs(diff).toFixed(1)+'h' : '持平'} ${diff !==0 ? `(${symbol}${absPercent}%)` : ''}`;
                 } else {
-                    compareHtml = `📅 结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h（无更早周可比）`;
-                    humorTxt = recentWeek.hours > 0 ? "💪 开启加班征程，注意稳住节奏 💪" : "🌱 本周劳逸结合，下周继续保持 🌱";
+                    compareHtml = `<i class="fas fa-calendar-week"></i> 结束周（${recentWeek.label}）加班 ${recentWeek.hours.toFixed(1)}h（无更早周可比）`;
                 }
             } else {
-                compareHtml = "📭 当前周期暂无已结束的完整周数据（未来周不纳入同比）";
-                humorTxt = "🔮 未来战士，加班尚未发生 🔮";
+                compareHtml = '<i class="fas fa-inbox"></i> 当前周期暂无已结束的完整周数据（未来周不纳入同比）';
             }
             document.getElementById('weekly-compare-text').innerHTML = compareHtml;
-            document.getElementById('weekly-humor').innerHTML = humorTxt;
         }
 
-        function updateSummary(start, end) {
+        // ========= 顶部小胶囊 + 滚动标语 =========
+        function getCurrentPeriodTotalHours() {
+            const days = getDaysArray(displayPeriod.start, displayPeriod.end);
+            const data = loadData();
+            let total = 0;
+            for (let d of days) { const key = formatDateKey(d); total += parseFloat(data[key]?.h) || 0; }
+            return total;
+        }
+
+        function getSmartSlogan(totalHours) {
+            const icons = { zero: '<i class="fas fa-spa"></i>', low: '<i class="fas fa-walking"></i>', mid: '<i class="fas fa-chart-line"></i>', high: '<i class="fas fa-fire"></i>', extreme: '<i class="fas fa-skull-crossbones"></i>' };
+            if (totalHours <= 0) {
+                const msgs = [`${icons.zero} 本周加班为0，享受久违的悠闲吧 ${icons.zero}`, `${icons.zero} 完美规避加班，建议买张彩票试试 ${icons.zero}`, `${icons.zero} 零加班成就达成，奖励自己一杯奶茶吧 <i class="fas fa-mug-hot"></i>`, `${icons.zero} 工作生活平衡大师，向你学习 <i class="fas fa-hand-peace"></i>`];
+                return msgs[Math.floor(Math.random() * msgs.length)];
+            }
+            if (totalHours < 10) {
+                const msgs = [`${icons.low} 轻度加班，注意活动颈椎，多眨眼 <i class="fas fa-eye"></i>`, `${icons.low} 加班${totalHours.toFixed(1)}h，摸摸鱼喝喝水，明天又是新的一天 <i class="fas fa-fish"></i>`, `${icons.low} 小加怡情，大加伤身，今日份努力已达标 <i class="fas fa-chart-simple"></i>`, `${icons.low} 打工魂在燃烧，但记得按时吃饭哦 <i class="fas fa-utensils"></i>`];
+                return msgs[Math.floor(Math.random() * msgs.length)];
+            }
+            if (totalHours < 20) {
+                const msgs = [`${icons.mid} 中度加班${totalHours.toFixed(1)}h，周末补觉回血 <i class="fas fa-bed"></i>`, `${icons.mid} 奋斗气息浓厚，建议抬头望望天空 <i class="fas fa-cloud-sun"></i>`, `${icons.mid} 离爆肝还有距离，但别掉以轻心 <i class="fas fa-heartbeat"></i>`, `${icons.mid} 加班时数${totalHours.toFixed(1)}h，你是公司的脊梁 <i class="fas fa-dragon"></i>`];
+                return msgs[Math.floor(Math.random() * msgs.length)];
+            }
+            if (totalHours < 35) {
+                const msgs = [`${icons.high} 高强度加班${totalHours.toFixed(1)}h！请务必安排休息 <i class="fas fa-hand-holding-heart"></i>`, `${icons.high} 爆肝预警！连续加班小心秃头 <i class="fas fa-skull"></i>`, `${icons.high} 你已进入“卷王”候选区，快喝口枸杞压惊 <i class="fas fa-mug-hot"></i>`, `${icons.high} 加班${totalHours.toFixed(1)}h，老板看了都流泪 <i class="fas fa-trophy"></i>`];
+                return msgs[Math.floor(Math.random() * msgs.length)];
+            }
+            const msgs = [`${icons.extreme} 极限爆肝！${totalHours.toFixed(1)}h！请立即休息，健康第一 <i class="fas fa-ambulance"></i>`, `${icons.extreme} 这不是加班，这是玩命！快逃.jpg <i class="fas fa-person-running"></i>`, `${icons.extreme} 超人本超，但超人也需要睡觉 <i class="fas fa-moon"></i>`, `${icons.extreme} 加班${totalHours.toFixed(1)}h，建议向劳动监察致敬 <i class="fas fa-gavel"></i>`];
+            return msgs[Math.floor(Math.random() * msgs.length)];
+        }
+
+        function updateHeaderContent() {
+            const total = getCurrentPeriodTotalHours();
+            document.getElementById('total-hours-display').innerHTML = `${total.toFixed(1)}h`;
+            const slogan = getSmartSlogan(total);
+            document.getElementById('header-slogan').innerHTML = slogan;
+        }
+
+        // ========= 三列统计 + 薪资合计 =========
+        function updateSummaryColumns(start, end) {
             const data = loadData(), wage = getWage();
-            let tempH=0, tempFee=0, holiH=0, holiFee=0, pubH=0, pubFee=0;
+            let tempH=0, holiH=0, pubH=0;
+            let tempFee=0, holiFee=0, pubFee=0;
             getDaysArray(start, end).forEach(d => {
                 const key = formatDateKey(d), val = parseFloat(data[key]?.h) || 0;
                 if (!val) return;
-                if (isPublicHoliday(d)) { pubH += val; pubFee += val*wage*3; }
-                else if (isWeekend(d) || customHolidays.has(key)) { holiH += val; holiFee += val*wage*2; }
-                else { tempH += val; tempFee += val*wage*1.5; }
+                if (isPublicHoliday(d)) { pubH += val; pubFee += val * wage * 3; }
+                else if (isWeekend(d) || customHolidays.has(key)) { holiH += val; holiFee += val * wage * 2; }
+                else { tempH += val; tempFee += val * wage * 1.5; }
             });
             const totalFee = tempFee + holiFee + pubFee;
-            document.getElementById('summary').innerHTML = `
-                🌙临时加班（1.5倍）：<strong>${tempH.toFixed(1)}</strong> 小时<br>
-                ☀️假日加班（2倍）：<strong>${holiH.toFixed(1)}</strong> 小时<br>
-                <span class="pub-row">🏛 国假加班（3倍）：<strong>${pubH.toFixed(1)}</strong> 小时</span><br>
-                <span class="total-row">💰加班薪资合计：<strong>￥${totalFee.toFixed(2)}</strong></span>
+            
+            const columnsHtml = `
+                <div class="stat-card">
+                    <i class="fa-regular fa-moon"></i>
+                    <div class="stat-label">临时加班</div>
+                    <div class="stat-hours">${tempH.toFixed(1)}<span style="font-size:0.6rem;">h</span></div>
+                    <div class="stat-multiplier">1.5倍</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-regular fa-sun"></i>
+                    <div class="stat-label">假日加班</div>
+                    <div class="stat-hours">${holiH.toFixed(1)}<span style="font-size:0.6rem;">h</span></div>
+                    <div class="stat-multiplier">2倍</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-landmark"></i>
+                    <div class="stat-label">国假加班</div>
+                    <div class="stat-hours">${pubH.toFixed(1)}<span style="font-size:0.6rem;">h</span></div>
+                    <div class="stat-multiplier">3倍</div>
+                </div>
             `;
+            document.getElementById('stats-columns').innerHTML = columnsHtml;
+            document.getElementById('total-salary').innerHTML = `<i class="fas fa-coins"></i> 加班薪资合计：<strong>￥${totalFee.toFixed(2)}</strong>`;
         }
 
+        // ========= 日历渲染（含进度条，支持调试模式超限显示） =========
         function renderCalendar(start, end, today) {
             const days = getDaysArray(start, end);
             let html = ['<div class="calendar-header">'+["一","二","三","四","五","六","日"].map(d=>`<span>${d}</span>`).join('')+'</div>'];
@@ -917,15 +1027,27 @@
                     const h = data[key]?.h;
                     let bar = '', valShow = '';
                     if (h != null && h > 0) {
-                        const max = (isPub || isWk || isCustom) ? 8 : 4;
-                        const frac = h / max;
-                        const cls = frac > 0.99 ? 'full' : (frac > 0.66 ? 'warn' : '');
-                        bar = `<div class="cell-ot-bar-bg"><div class="cell-ot-bar ${cls}" style="width:${Math.min(frac*100,100)}%"></div></div>`;
+                        // 确定上限（仅用于比例计算，调试模式下可超限）
+                        const maxLimit = (isPub || isWk || isCustom) ? 8 : 4;
+                        let frac = h / maxLimit;
+                        let cls = '';
+                        if (debugMode && h > maxLimit) {
+                            // 调试模式下超过上限，进度条满格并标记为危险
+                            frac = 1;
+                            cls = 'full';
+                        } else {
+                            cls = frac > 0.99 ? 'full' : (frac > 0.66 ? 'warn' : '');
+                        }
+                        const widthPercent = Math.min(frac * 100, 100);
+                        bar = `<div class="cell-ot-bar-bg"><div class="cell-ot-bar ${cls}" style="width:${widthPercent}%"></div></div>`;
                         valShow = `<div class="cell-ot-num">${h}h</div>`;
                     }
                     const attrs = [isWk && !isPub ? 'data-weekend="1"' : '', isPub ? 'data-pubholiday="1"' : ''].filter(Boolean).join(' ');
                     const cls = `${isToday?' today':''}${isCustom?' custom-holiday':''}`;
-                    row.push(`<div class="calendar-cell${cls}" tabindex="0" data-datekey="${key}" ${attrs} onclick="onCellClick('${key}')"><div class="cell-date">${d.getDate()}</div>${bar}${valShow}</div>`);
+                    let starIcons = '';
+                    if (isPub) starIcons = `<i class="fas fa-star holiday-star" style="position:absolute; top:-7px; right:-12px; font-size:0.5em; color:var(--pubholiday-accent);"></i>`;
+                    else if (isCustom) starIcons = `<i class="fas fa-star custom-star" style="position:absolute; top:-7px; right:-12px; font-size:0.5em; color:#a0a0c0; opacity:0.8;"></i>`;
+                    row.push(`<div class="calendar-cell${cls}" tabindex="0" data-datekey="${key}" ${attrs} onclick="onCellClick('${key}')"><div class="cell-date" style="position:relative;">${d.getDate()}${starIcons}</div>${bar}${valShow}</div>`);
                 }
                 if ((i+1)%7 === 0 || i === cells.length-1) {
                     html.push(`<div class="calendar-row">${row.join('')}</div>`);
@@ -947,53 +1069,47 @@
             };
         }
 
-        // ========= 全局渲染 =========
-        function render() {
-            customHolidays = getCustomHolidaysSet();
-            const now = new Date();
-            const p = displayPeriod;
-            document.getElementById('period-label').innerHTML = `考勤周期：${p.start.getFullYear()}/${p.start.getMonth()+1}/${p.start.getDate()} - ${p.end.getFullYear()}/${p.end.getMonth()+1}/${p.end.getDate()}`;
-            const total = Math.round((p.end - p.start) / 86400000) + 1;
-            const cur = Math.min(total, Math.max(0, Math.round((now - p.start) / 86400000) + 1));
-            document.getElementById('progress-inner').style.width = `${(cur/total)*100}%`;
-            renderCalendar(p.start, p.end, now);
-            updateSummary(p.start, p.end);
-            drawWeeklyChart();     // 修正后的柱状图+同比
-            showWageInput();
-            // 长按事件绑定
-            const cal = document.getElementById('calendar');
-            if (cal) {
-                cal.removeEventListener('pointerdown', onPointerDown);
-                cal.removeEventListener('pointerup', onPointerUp);
-                cal.removeEventListener('pointermove', onPointerMove);
-                cal.removeEventListener('pointercancel', cancelLongPress);
-                if (holidayMarkEnabled) {
-                    cal.addEventListener('pointerdown', onPointerDown);
-                    cal.addEventListener('pointerup', onPointerUp);
-                    cal.addEventListener('pointermove', onPointerMove);
-                    cal.addEventListener('pointercancel', cancelLongPress);
-                }
-            }
+        function updateProgressIconPosition() {
+            const progressInner = document.getElementById('progress-inner');
+            const icon = document.getElementById('progress-icon');
+            if (!progressInner || !icon) return;
+            const parentWidth = progressInner.parentElement.clientWidth;
+            const progressPercent = parseFloat(progressInner.style.width) / 100;
+            let leftPercent = Math.min(1, Math.max(0, progressPercent));
+            const leftPx = leftPercent * parentWidth;
+            icon.style.left = leftPx + 'px';
         }
 
+        // ========= 加班录入弹窗（调试模式无上限） =========
         window.onCellClick = function(key) {
-            if (preventNextClickUntil && Date.now() < preventNextClickUntil) { preventNextClickUntil = 0; return; }
             const mask = document.getElementById('modal-mask'), input = document.getElementById('modal-input-hours'), label = document.getElementById('modal-date-label');
             const date = new Date(key + 'T00:00:00');
             const isPub = isPublicHoliday(date), isWk = isWeekend(date), isCustom = !isPub && !isWk && customHolidays.has(key);
-            let max, type;
-            if (isPub) { max=8; type='<span class="pub-badge">🏛国假 · 3倍</span>'; }
-            else if (isWk || isCustom) { max=8; type='（☀️假日·2倍）'; }
-            else { max=4; type='（🌙工作日·1.5倍）'; }
+            let max, type, upperLimitText;
+            if (debugMode) {
+                // 调试模式：无上限
+                max = Infinity;
+                type = isPub ? '<span class="pub-badge"><i class="fas fa-landmark"></i> 国假 · 3倍</span>' : (isWk || isCustom) ? '<i class="fa-regular fa-sun"></i> 假日·2倍' : '<i class="fa-regular fa-moon"></i> 工作日·1.5倍';
+                upperLimitText = '调试模式：无上限';
+            } else {
+                if (isPub) { max = 8; type = '<span class="pub-badge"><i class="fas fa-landmark"></i> 国假 · 3倍</span>'; upperLimitText = `上限${max}h`; }
+                else if (isWk || isCustom) { max = 8; type = '<i class="fa-regular fa-sun"></i> 假日·2倍'; upperLimitText = `上限${max}h`; }
+                else { max = 4; type = '<i class="fa-regular fa-moon"></i> 工作日·1.5倍'; upperLimitText = `上限${max}h`; }
+            }
             const data = loadData();
             input.value = data[key]?.h ?? '';
-            input.max = max; input.min = 0;
-            label.innerHTML = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${type}，上限${max}h`;
+            if (!debugMode) input.max = max;
+            else input.removeAttribute('max');
+            input.min = 0;
+            label.innerHTML = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${type}，${upperLimitText}`;
             mask.style.display = 'flex';
             input.focus(); input.select();
             window.modalSaveHandler = () => {
                 let v = parseFloat(input.value) || 0;
-                v = Math.min(max, Math.max(0, v));
+                v = Math.max(0, v);
+                if (!debugMode) v = Math.min(max, v);
+                // 保留一位小数
+                v = Math.round(v * 10) / 10;
                 if (!data[key]) data[key] = {};
                 v === 0 ? delete data[key].h : data[key].h = v;
                 saveData(data);
@@ -1002,12 +1118,45 @@
             };
             document.getElementById('modal-save-btn').onclick = window.modalSaveHandler;
             document.getElementById('modal-cancel-btn').onclick = () => { mask.style.display = 'none'; };
-            input.onkeydown = e => { if (e.key==='Enter') window.modalSaveHandler(); };
-            mask.onclick = e => { if (e.target===mask) mask.style.display='none'; };
+            input.onkeydown = e => { if (e.key === 'Enter') window.modalSaveHandler(); };
+            mask.onclick = e => { if (e.target === mask) mask.style.display = 'none'; };
         };
+
+        // ========= 渲染主函数 =========
+        function render() {
+            customHolidays = getCustomHolidaysSet();
+            loadUserPublicHolidays();
+            const now = new Date();
+            const p = displayPeriod;
+            document.getElementById('period-label').innerHTML = `考勤周期：${p.start.getFullYear()}/${p.start.getMonth()+1}/${p.start.getDate()} - ${p.end.getFullYear()}/${p.end.getMonth()+1}/${p.end.getDate()}`;
+            const total = Math.round((p.end - p.start) / 86400000) + 1;
+            const cur = Math.min(total, Math.max(0, Math.round((now - p.start) / 86400000) + 1));
+            const percent = (cur / total) * 100;
+            const progressInner = document.getElementById('progress-inner');
+            progressInner.style.width = `${percent}%`;
+            setTimeout(() => updateProgressIconPosition(), 10);
+            renderCalendar(p.start, p.end, now);
+            updateSummaryColumns(p.start, p.end);
+            drawWeeklyChart();
+            showWageInput();
+            updateHeaderContent();
+            
+            const cal = document.getElementById('calendar');
+            if (cal) {
+                cal.removeEventListener('pointerdown', onPointerDown);
+                cal.removeEventListener('pointerup', onPointerUp);
+                cal.removeEventListener('pointermove', onPointerMove);
+                if (debugMode) {
+                    cal.addEventListener('pointerdown', onPointerDown);
+                    cal.addEventListener('pointerup', onPointerUp);
+                    cal.addEventListener('pointermove', onPointerMove);
+                }
+            }
+        }
         
         render();
-        window.addEventListener('resize', () => drawWeeklyChart());
+        window.addEventListener('resize', () => { drawWeeklyChart(); updateProgressIconPosition(); });
+        document.getElementById('progress-inner').addEventListener('transitionend', updateProgressIconPosition);
     </script>
 </body>
 </html>
